@@ -1,3 +1,6 @@
+import { FEATURES } from "./features";
+import { PRICING } from "./pricing";
+
 // Knowledge for "Lens", the on-site help assistant. Kept separate from the
 // diagnostic prompt: this bot answers questions and navigates, it doesn't diagnose.
 
@@ -62,6 +65,20 @@ The app has no database. Data is sent once to the AI to produce the analysis. Do
 ## About the builder
 S Surya Narayan designed the troubleshooting method from 12+ real store loss cases and built the app (Next.js, TypeScript, Claude API, Vercel). LinkedIn: https://www.linkedin.com/in/ssuryanarayan`;
 
+// Extra knowledge for features behind switches, so the assistant never mentions a disabled feature.
+export function chatSystem(): string {
+  const parts = [CHAT_SYSTEM];
+  if (FEATURES.studio) {
+    parts.push(`## Section Studio ([open it](/studio))
+An AI builder for Shopify Online Store 2.0 sections. Users set a brand style (name, primary and accent colors, font, corners, vibe), pick a preset (hero, product grid, testimonials, FAQ, image + text, announcement bar, trust badges, newsletter) or describe a section, and click Generate. They get a live desktop/mobile preview, the Liquid code with a theme-editor settings schema, a schema check, and install steps. They can refine by chat ("make the button rounder"), switch between versions, and download the .liquid file. To install: Online Store → Themes → duplicate the theme → Edit code → sections → Add a new section → paste → Save → Customize → Add section. Sections are saved in the browser only.`);
+  }
+  if (FEATURES.tokens) {
+    parts.push(`## Tokens ([pricing](/pricing))
+Demo tokens, no real payments yet. New visitors get ${PRICING.startTokens} tokens and can claim ${PRICING.topupTokens} more free once a day on the pricing page. Costs: Ask Lens is free; troubleshoot run ⬡${PRICING.cost.troubleshoot}${FEATURES.studio ? `; Studio Standard is ${PRICING.freeThemePerDay} free per day, then ⬡${PRICING.cost.themeStandard}; Studio Pro ⬡${PRICING.cost.themePro}` : ""}. Balances are stored in the browser (cookie), so clearing cookies resets them. Paid packs are shown as "coming soon".`);
+  }
+  return parts.join("\n\n");
+}
+
 // Offline answers used when no free-model key is configured or the model is unavailable.
 const FALLBACK: { re: RegExp; a: string }[] = [
   { re: /how (do|to) (i )?(use|start)|get started|begin|navigate/i, a: "1. Open [Launch the agent](#try) and answer the 4 quick questions.\n2. Drop your CSV exports or paste tables. Only the weekly PnL is required.\n3. Click **Run the agent**. It takes 1–3 minutes.\n\nNo data? Try a [sample case](#cases)." },
@@ -77,7 +94,13 @@ const FALLBACK: { re: RegExp; a: string }[] = [
   { re: /how (does it|it) work|architecture|pipeline/i, a: "Intake → **Engine** (code computes the numbers) → **Reasoning** (8 steps) → **Verifier** (guardrails) → Report. See [Architecture](#how)." },
 ];
 
+const FALLBACK_FEATURES: { re: RegExp; a: string; on: boolean }[] = [
+  { on: FEATURES.studio, re: /theme|section|studio|liquid|shopify (design|page|store)|build/i, a: "**Section Studio** builds Shopify sections with AI: pick a style, describe the section, preview it, refine it, and download the `.liquid` file. [Open Section Studio](/studio)" },
+  { on: FEATURES.tokens, re: /token|price|pricing|cost|pay|credit|free/i, a: `Ask Lens is free. A troubleshoot run costs ⬡${PRICING.cost.troubleshoot}.${FEATURES.studio ? ` Studio gives ${PRICING.freeThemePerDay} free sections per day, then ⬡${PRICING.cost.themeStandard} (Pro ⬡${PRICING.cost.themePro}).` : ""} You start with ${PRICING.startTokens} demo tokens. [See pricing](/pricing)` },
+];
+
 export function fallbackAnswer(q: string): string {
-  return FALLBACK.find((f) => f.re.test(q))?.a
+  return FALLBACK_FEATURES.find((f) => f.on && f.re.test(q))?.a
+    ?? FALLBACK.find((f) => f.re.test(q))?.a
     ?? "I can help with using the site, the method, or e-commerce terms. Try **\"What data do I need?\"** or jump to [Launch the agent](#try), [Sample cases](#cases) or the [FAQ](#faq).";
 }

@@ -38,6 +38,29 @@ Browser (Next.js page)  ──POST /api/analyze──▶  Serverless function (V
 
 Every later commit to GitHub, including edits made in GitHub's web editor, redeploys automatically.
 
+## Feature switches
+
+Two add-on features can be turned off or back on without changing any code. Set the variable in **Vercel → Settings → Environment Variables**, then **Redeploy**.
+
+| Variable | `off` means | Default |
+|---|---|---|
+| `NEXT_PUBLIC_FEATURE_STUDIO` | Section Studio page, API, nav link and home promo are removed (`/studio` returns 404) | on |
+| `NEXT_PUBLIC_FEATURE_TOKENS` | No wallet, no pricing page, nothing is charged; Studio shows only the free Standard tier | on |
+
+To turn a feature back on, delete the variable (or set it to `on`) and redeploy. Balances and saved sections live in visitors' browsers, so they come back too.
+
+Studio code is self-contained, so you can also remove it from the repo entirely if you want:
+`app/studio/`, `app/api/studio/`, `components/studio/`, `lib/theme.ts`.
+
+### Environment variables
+
+| Variable | Used by |
+|---|---|
+| `ANTHROPIC_API_KEY` | Troubleshoot agent and Studio Pro |
+| `GEMINI_API_KEY` | Ask Lens chat and Studio Standard (free tier, aistudio.google.com/apikey) |
+| `WALLET_SECRET` | Optional: a long random string used to sign token balances |
+| `THEME_FREE_MODEL` / `THEME_PRO_MODEL` / `CHAT_MODEL` / `ANTHROPIC_MODEL` | Optional model overrides |
+
 ## Customise
 
 | What | Where |

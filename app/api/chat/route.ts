@@ -1,4 +1,4 @@
-import { CHAT_SYSTEM, fallbackAnswer } from "@/lib/chatKnowledge";
+import { chatSystem, fallbackAnswer } from "@/lib/chatKnowledge";
 import { rateLimit } from "@/lib/rateLimit";
 
 export const runtime = "nodejs";
@@ -45,7 +45,7 @@ export async function POST(req: Request) {
         stream: true,
         max_tokens: 1200,
         temperature: 0.3,
-        messages: [{ role: "system", content: CHAT_SYSTEM }, ...messages],
+        messages: [{ role: "system", content: chatSystem() }, ...messages],
       }),
     });
   } catch {

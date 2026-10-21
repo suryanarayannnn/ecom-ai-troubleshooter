@@ -1,7 +1,10 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
-import { NextResponse } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 import { AnalysisSchema } from "@/lib/schema";
+import { FEATURES } from "@/lib/features";
+import { PRICING } from "@/lib/pricing";
+import { publicWallet, readWallet, writeWallet, type Wallet } from "@/lib/wallet";
 import { getSystemPrompt } from "@/lib/systemPrompt";
 import { rateLimit } from "@/lib/rateLimit";
 import { engineForPrompt, runEngine, type EngineResult } from "@/lib/engine";
@@ -13,7 +16,14 @@ export const maxDuration = 300; // the reasoning step can take a minute or two
 const MAX_INPUT_CHARS = 60_000;
 const MODEL = process.env.ANTHROPIC_MODEL || "claude-opus-5-5";
 
-export async function POST(req: Request) {
+// Charges the run when the token system is on; otherwise passes the response through.
+function settle(res: NextResponse, w: Wallet | null) {
+  if (!w) return res;
+  w.bal -= PRICING.cost.troubleshoot;
+  return writeWallet(res, w);
+}
+
+export async function POST(req: NextRequest) {
   if (!process.env.ANTHROPIC_API_KEY) {
     return NextResponse.json(
       { error: "Server is missing ANTHROPIC_API_KEY. Add it in Vercel → Settings → Environment Variables, then redeploy." },
@@ -46,6 +56,15 @@ export async function POST(req: Request) {
       { status: 413 },
     );
   }
+
+  const wallet = FEATURES.tokens ? readWallet(req) : null;
+  if (wallet && wallet.bal < PRICING.cost.troubleshoot) {
+    return writeWallet(NextResponse.json(
+      { error: `A troubleshoot run needs ${PRICING.cost.troubleshoot} tokens and you have ${wallet.bal}.`, code: "NO_TOKENS", wallet: publicWallet(wallet) },
+      { status: 402 },
+    ), wallet);
+  }
+  const after = () => (wallet ? publicWallet({ ...wallet, bal: wallet.bal - PRICING.cost.troubleshoot }) : null);
 
   // Layer 1: deterministic calculation
   const requestedWeek = data.match(/Loss week to diagnose:\s*(.+)/i)?.[1]?.trim();
@@ -95,14 +114,15 @@ export async function POST(req: Request) {
     // Layer 3: verification
     try {
       const { analysis, checks } = verify(response.parsed_output, engine);
-      return NextResponse.json({ analysis, engine, checks });
+      return settle(NextResponse.json({ analysis, engine, checks, wallet: after() }), wallet);
     } catch (e) {
       console.error("verifier failed", e);
-      return NextResponse.json({
+      return settle(NextResponse.json({
         analysis: response.parsed_output,
         engine,
         checks: [{ label: "Verifier", status: "warn", detail: "The verifier could not run on this output. Numbers are unverified." }],
-      });
+        wallet: after(),
+      }), wallet);
     }
   } catch (err) {
     if (err instanceof Anthropic.RateLimitError) {

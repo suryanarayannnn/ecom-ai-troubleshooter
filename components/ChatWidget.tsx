@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
+import { FEATURES } from "@/lib/features";
 
 type Msg = { role: "user" | "assistant"; content: string };
 
@@ -13,10 +14,11 @@ const GREETING: Msg = {
 const SUGGESTIONS = [
   "How do I use this?",
   "What data do I need?",
+  ...(FEATURES.studio ? ["How do I build a Shopify section?"] : []),
+  ...(FEATURES.tokens ? ["How do tokens work?"] : []),
   "What is RTO?",
   "Show me a sample case",
   "Does the AI make up numbers?",
-  "How is the benchmark picked?",
 ];
 
 export default function ChatWidget() {
@@ -42,10 +44,16 @@ export default function ChatWidget() {
   useEffect(() => { if (open) setTimeout(() => inputRef.current?.focus(), 150); }, [open]);
 
   function go(href: string) {
-    if (href.startsWith("#case-")) {
-      window.dispatchEvent(new CustomEvent("losslens:load-case", { detail: href.slice(6) }));
+    const onHome = window.location.pathname === "/";
+    if (href.startsWith("/")) {
+      window.location.href = href; // another page (Studio, Pricing)
+    } else if (href.startsWith("#case-")) {
+      if (onHome) window.dispatchEvent(new CustomEvent("losslens:load-case", { detail: href.slice(6) }));
+      else window.location.href = `/#cases`;
     } else {
-      document.querySelector(href)?.scrollIntoView({ behavior: "smooth" });
+      const el = document.querySelector(href);
+      if (el) el.scrollIntoView({ behavior: "smooth" });
+      else window.location.href = `/${href}`; // section lives on the home page
     }
     if (window.innerWidth < 640) setOpen(false);
   }
@@ -154,7 +162,7 @@ export default function ChatWidget() {
                     <ReactMarkdown
                       components={{
                         a: ({ href = "", children }) =>
-                          href.startsWith("#") ? (
+                          href.startsWith("#") || href.startsWith("/") ? (
                             <button type="button" onClick={() => go(href)} className="mx-0.5 inline-flex items-center rounded-md px-1.5 py-0.5 text-xs font-medium" style={{ background: "rgba(34,211,238,.12)", color: "#7ee8f7", border: "1px solid rgba(34,211,238,.35)" }}>
                               {children} ↘
                             </button>

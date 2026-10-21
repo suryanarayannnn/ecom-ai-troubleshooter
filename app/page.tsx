@@ -2,6 +2,10 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import ChatWidget from "@/components/ChatWidget";
+import Nav from "@/components/Nav";
+import { FEATURES } from "@/lib/features";
+import { PRICING, type PublicWallet } from "@/lib/pricing";
+import { emitWallet } from "@/lib/useWallet";
 import type { Analysis } from "@/lib/schema";
 import type { EngineResult } from "@/lib/engine";
 import type { Check } from "@/lib/verify";
@@ -43,6 +47,7 @@ const GUARDS = [
 
 const ROADMAP = [
   { when: "Live · v1", t: "Web agent", d: "Guided intake, deterministic engine, 8-step reasoning, verifier, dashboard and JSON sidecar.", on: true },
+  ...(FEATURES.studio ? [{ when: "Live · beta", t: "Section Studio", d: "AI-generated Shopify sections with live preview, chat refinement and Liquid download.", on: true }] : []),
   { when: "Next", t: "Batch mode", d: "10 stores per run with a priority queue ranked by budget and loss depth." },
   { when: "Next", t: "Direct connectors", d: "Pull from Shopify, Meta Ads and courier APIs, with no manual exports." },
   { when: "Later", t: "Auto-routing", d: "Catalogue and logistics findings become tickets for the team that owns the fix." },
@@ -81,6 +86,7 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<Result | null>(null);
+  const [noTokens, setNoTokens] = useState(false);
   const fileInput = useRef<HTMLInputElement>(null);
 
   const combined = useMemo(
@@ -144,6 +150,7 @@ export default function Home() {
   async function analyze() {
     setLoading(true);
     setError(null);
+    setNoTokens(false);
     setResult(null);
     try {
       const res = await fetch("/api/analyze", {
@@ -152,6 +159,11 @@ export default function Home() {
         body: JSON.stringify({ data: buildPayload(answers, combined) }),
       });
       const json = await res.json().catch(() => null);
+      emitWallet(json?.wallet as PublicWallet | undefined);
+      if (res.status === 402) {
+        setNoTokens(true);
+        throw new Error(json?.error || "Not enough tokens.");
+      }
       if (!res.ok) throw new Error(json?.error || `Request failed (${res.status})`);
       setResult(json as Result);
       setTimeout(() => document.getElementById("results")?.scrollIntoView({ behavior: "smooth" }), 80);
@@ -164,26 +176,7 @@ export default function Home() {
 
   return (
     <main>
-      {/* Nav */}
-      <nav className="fixed inset-x-0 top-0 z-50 border-b backdrop-blur-xl" style={{ borderColor: "var(--line)", background: "rgba(4,5,10,.65)" }}>
-        <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4">
-          <a href="#" className="font-display flex items-center gap-2 text-lg font-bold">
-            <span className="relative flex h-7 w-7 items-center justify-center rounded-lg" style={{ background: "var(--grad)" }}>
-              <span className="h-3 w-3 rounded-full border-2" style={{ borderColor: "#04050a" }} />
-            </span>
-            <span>Loss<span className="gradient-text">Lens</span></span>
-          </a>
-          <div className="flex items-center gap-1 text-sm sm:gap-6">
-            <a href="#how" className="hidden muted hover:text-white md:inline">Architecture</a>
-            <a href="#guardrails" className="hidden muted hover:text-white md:inline">Guardrails</a>
-            <a href="#cases" className="hidden muted hover:text-white md:inline">Cases</a>
-            <a href="#faq" className="hidden muted hover:text-white md:inline">FAQ</a>
-            <a href={SITE.linkedin} target="_blank" rel="noreferrer" className="btn-ghost rounded-lg px-3 py-1.5 text-xs font-medium">
-              {SITE.authorName} ↗
-            </a>
-          </div>
-        </div>
-      </nav>
+      <Nav active="home" />
 
       <Hero />
 
@@ -417,7 +410,7 @@ export default function Home() {
                     disabled={loading || combined.length < 50 || combined.length > MAX_CHARS}
                     className="btn-primary rounded-xl px-6 py-2.5 text-sm disabled:cursor-not-allowed disabled:opacity-40"
                   >
-                    {loading ? "Agent running…" : "Run the agent →"}
+                    {loading ? "Agent running…" : FEATURES.tokens ? `Run the agent · ⬡ ${PRICING.cost.troubleshoot} →` : "Run the agent →"}
                   </button>
                 </div>
               </div>
@@ -425,6 +418,9 @@ export default function Home() {
               {error && (
                 <p className="animate-fade-up mt-5 rounded-xl border p-3.5 text-sm" style={{ borderColor: "rgba(255,92,122,.5)", background: "rgba(255,92,122,.08)", color: "#ffb3c1" }}>
                   {error}
+                  {noTokens && (
+                    <> <a href="/pricing" className="ml-1 font-semibold underline" style={{ color: "#a5f3fc" }}>Get demo tokens →</a></>
+                  )}
                 </p>
               )}
             </div>
@@ -442,10 +438,40 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Studio promo (feature-switched) */}
+      {FEATURES.studio && (
+        <section className="mx-auto max-w-6xl px-4 pt-28">
+          <Reveal>
+            <a href="/studio" className="card hud glow-border spot group grid items-center gap-8 overflow-hidden p-8 sm:p-10 md:grid-cols-[1.2fr_1fr]">
+              <div>
+                <p className="label" style={{ color: "#f9a8d4" }}>{"// new · section studio"}</p>
+                <h2 className="font-display mt-3 text-3xl font-bold sm:text-4xl">Fixed the leak? <span className="gradient-text">Rebuild the storefront.</span></h2>
+                <p className="mt-4 muted">
+                  Describe a Shopify section in plain English: hero, product grid, testimonials, FAQ, trust badges. The AI writes
+                  production-ready Liquid with theme-editor settings. Preview it live, refine it by chat, and download.
+                </p>
+                <p className="mono mt-5 text-sm font-semibold transition-transform group-hover:translate-x-1" style={{ color: "var(--cyan)" }}>
+                  Open Section Studio →{FEATURES.tokens && <span className="ml-2 font-normal muted">{PRICING.freeThemePerDay} free per day</span>}
+                </p>
+              </div>
+              <div className="mono rounded-xl border p-4 text-[11.5px] leading-relaxed" style={{ borderColor: "var(--line)", background: "rgba(0,0,0,.45)", color: "#7d879e" }}>
+                <div><span style={{ color: "#f472b6" }}>{"{%"}</span> schema <span style={{ color: "#f472b6" }}>{"%}"}</span></div>
+                <div className="pl-3">{"{"} <span style={{ color: "#7ee8f7" }}>&quot;name&quot;</span>: <span style={{ color: "#a3e635" }}>&quot;Hero banner&quot;</span>,</div>
+                <div className="pl-3"><span style={{ color: "#7ee8f7" }}>&quot;settings&quot;</span>: [ … 12 settings ],</div>
+                <div className="pl-3"><span style={{ color: "#7ee8f7" }}>&quot;blocks&quot;</span>: [ button × 2 ],</div>
+                <div className="pl-3"><span style={{ color: "#7ee8f7" }}>&quot;presets&quot;</span>: [ … ] {"}"}</div>
+                <div><span style={{ color: "#f472b6" }}>{"{%"}</span> endschema <span style={{ color: "#f472b6" }}>{"%}"}</span></div>
+                <div className="mt-2" style={{ color: "var(--good)" }}>✓ schema valid · ✓ presets · ✓ scoped CSS</div>
+              </div>
+            </a>
+          </Reveal>
+        </section>
+      )}
+
       {/* Roadmap */}
       <section className="mx-auto max-w-6xl px-4 py-28">
         <SectionHead kicker="roadmap" title="Where this goes next." />
-        <div className="mt-14 grid gap-3 md:grid-cols-5">
+        <div className="mt-14 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {ROADMAP.map((r, i) => (
             <Reveal key={r.t} delay={i * 80}>
               <div className={`card spot h-full p-5 ${r.on ? "glow-border" : ""}`}>
