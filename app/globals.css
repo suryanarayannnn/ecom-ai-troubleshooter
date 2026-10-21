@@ -1,0 +1,56 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #f7f7f5;
+  --card: #ffffff;
+  --ink: #16181d;
+  --muted: #5f6672;
+  --line: #e4e4e0;
+  --bench: #3b7ea1;
+  --loss: #d1553f;
+  --good: #2f8a5b;
+  --warn: #c98a12;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0f1115;
+    --card: #171a20;
+    --ink: #eceef2;
+    --muted: #9aa1ad;
+    --line: #2a2f38;
+    --bench: #6fb3d6;
+    --loss: #ef7a64;
+    --good: #5cc28d;
+    --warn: #e5b14a;
+  }
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+
+.muted { color: var(--muted); }
+
+/* Markdown report */
+.prose-report h1, .prose-report h2, .prose-report h3 { font-weight: 650; margin: 1.4em 0 0.5em; }
+.prose-report h1 { font-size: 1.4rem; }
+.prose-report h2 { font-size: 1.2rem; }
+.prose-report h3 { font-size: 1.05rem; }
+.prose-report p, .prose-report li { line-height: 1.6; margin: 0.4em 0; }
+.prose-report ul { list-style: disc; padding-left: 1.4em; }
+.prose-report ol { list-style: decimal; padding-left: 1.4em; }
+.prose-report pre { background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 0.8em; overflow-x: auto; font-size: 0.85em; }
+.prose-report code { font-size: 0.88em; }
+.prose-report table { display: block; overflow-x: auto; border-collapse: collapse; margin: 0.8em 0; font-size: 0.88rem; }
+.prose-report th, .prose-report td { border: 1px solid var(--line); padding: 6px 10px; text-align: left; vertical-align: top; }
+.prose-report th { background: var(--bg); font-weight: 600; }
+.prose-report strong { font-weight: 650; }
