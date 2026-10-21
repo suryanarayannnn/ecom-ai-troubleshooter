@@ -42,13 +42,13 @@ export default function PricingApp() {
 
       <section className="relative overflow-hidden pt-28 pb-16">
         <div className="grid-bg absolute inset-0 -z-10" />
-        <div className="orb -z-10" style={{ width: 420, height: 420, left: "30%", top: "-30%", background: "#22d3ee", opacity: 0.25 }} />
+        <div className="orb -z-10" style={{ width: 420, height: 420, left: "30%", top: "-30%", background: "var(--cyan)", opacity: 0.25 }} />
         <div className="mx-auto max-w-5xl px-4 text-center">
           <p className="label" style={{ color: "var(--cyan)" }}>{"// tokens"}</p>
           <h1 className="font-display mt-3 text-4xl font-bold sm:text-6xl">Free to start. <span className="gradient-text">Tokens to scale.</span></h1>
           <p className="mx-auto mt-4 max-w-xl muted">One balance works across every tool. New visitors start with {PRICING.startTokens} tokens.</p>
 
-          <div className="card hud glow-border mx-auto mt-10 max-w-md p-6" style={{ background: "rgba(5,7,14,.8)" }}>
+          <div className="card hud glow-border mx-auto mt-10 max-w-md p-6" style={{ background: "var(--panel)" }}>
             <p className="label muted">your balance</p>
             <p className="font-display mt-2 text-6xl font-bold"><span style={{ color: "var(--cyan)" }}>⬡</span> {wallet ? wallet.balance : "··"}</p>
             {FEATURES.studio && wallet && <p className="mt-1 text-xs muted">{wallet.freeThemeLeft} free Studio generations left today</p>}
@@ -65,7 +65,7 @@ export default function PricingApp() {
           <div className="card overflow-hidden">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-left" style={{ background: "rgba(34,211,238,.05)" }}>
+                <tr className="text-left" style={{ background: "color-mix(in srgb, var(--cyan) 5%, transparent)" }}>
                   <th className="label px-5 py-3 muted">feature</th><th className="label px-5 py-3 muted">cost</th><th className="label hidden px-5 py-3 muted sm:table-cell">details</th>
                 </tr>
               </thead>
@@ -73,7 +73,7 @@ export default function PricingApp() {
                 {ROWS.map((r) => (
                   <tr key={r.f} className="border-t" style={{ borderColor: "var(--line)" }}>
                     <td className="px-5 py-3.5 font-medium">{r.f}</td>
-                    <td className="mono px-5 py-3.5" style={{ color: r.c === "Free" ? "var(--good)" : "#a5f3fc" }}>{r.c}</td>
+                    <td className="mono px-5 py-3.5" style={{ color: r.c === "Free" ? "var(--good)" : "var(--accent-ink)" }}>{r.c}</td>
                     <td className="hidden px-5 py-3.5 muted sm:table-cell">{r.note}</td>
                   </tr>
                 ))}
@@ -84,13 +84,13 @@ export default function PricingApp() {
       </section>
 
       <section className="mx-auto max-w-5xl px-4 pb-28">
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className="rainbow grid gap-4 md:grid-cols-3">
           {PRICING.packs.map((p, i) => (
             <Reveal key={p.name} delay={i * 90}>
               <div className={`card spot hud h-full p-6 ${"popular" in p && p.popular ? "glow-border" : ""}`}>
                 <div className="flex items-center justify-between">
                   <p className="font-display text-xl font-semibold">{p.name}</p>
-                  {"popular" in p && p.popular && <span className="label rounded px-1.5 py-0.5" style={{ fontSize: 9.5, background: "rgba(34,211,238,.15)", color: "#a5f3fc" }}>popular</span>}
+                  {"popular" in p && p.popular && <span className="label rounded px-1.5 py-0.5" style={{ fontSize: 9.5, background: "color-mix(in srgb, var(--cyan) 15%, transparent)", color: "var(--accent-ink)" }}>popular</span>}
                 </div>
                 <p className="font-display mt-4 text-4xl font-bold">{p.price}</p>
                 <p className="mono mt-1 text-sm" style={{ color: "var(--cyan)" }}>⬡ {p.tokens.toLocaleString()} tokens</p>

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono, Space_Grotesk } from "next/font/google";
 import SpotlightTracker from "@/components/SpotlightTracker";
+import { THEME_BOOT } from "@/lib/themeBoot";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
@@ -15,7 +16,10 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${inter.variable} ${grotesk.variable} ${jbmono.variable}`}>
+    <html lang="en" data-theme="light" suppressHydrationWarning className={`${inter.variable} ${grotesk.variable} ${jbmono.variable}`}>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_BOOT }} />
+      </head>
       <body>
         <SpotlightTracker />
         {children}

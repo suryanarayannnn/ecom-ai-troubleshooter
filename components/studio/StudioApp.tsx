@@ -135,16 +135,16 @@ export default function StudioApp() {
 
       <section className="relative overflow-hidden pt-24 pb-8">
         <div className="grid-bg absolute inset-0 -z-10" />
-        <div className="orb -z-10" style={{ width: 380, height: 380, right: "-6%", top: "-20%", background: "#f472b6", opacity: 0.25 }} />
-        <div className="orb -z-10" style={{ width: 380, height: 380, left: "-8%", top: "-10%", background: "#8b5cf6", opacity: 0.3 }} />
+        <div className="orb -z-10" style={{ width: 380, height: 380, right: "-6%", top: "-20%", background: "var(--pink)", opacity: 0.25 }} />
+        <div className="orb -z-10" style={{ width: 380, height: 380, left: "-8%", top: "-10%", background: "var(--violet)", opacity: 0.3 }} />
         <div className="mx-auto max-w-7xl px-4">
-          <p className="label animate-fade-up" style={{ color: "#f9a8d4" }}>{"// section studio · beta"}</p>
+          <p className="label animate-fade-up" style={{ color: "var(--pink-ink)" }}>{"// section studio · beta"}</p>
           <h1 className="font-display animate-fade-up mt-2 text-4xl font-bold sm:text-5xl">
             Describe it. <span className="gradient-text">Ship it to Shopify.</span>
           </h1>
           <p className="animate-fade-up mt-3 max-w-2xl muted">
             AI-built Online Store 2.0 sections with theme-editor settings, a live preview and chat refinement. Download the
-            <span className="mono text-white"> .liquid</span> file and drop it into any theme.
+            <span className="mono text-ink"> .liquid</span> file and drop it into any theme.
           </p>
         </div>
       </section>
@@ -152,7 +152,7 @@ export default function StudioApp() {
       <section className="mx-auto grid max-w-7xl gap-5 px-4 pb-24 lg:grid-cols-[380px_1fr]">
         {/* ---------- Controls ---------- */}
         <div className="space-y-5">
-          <div className="card hud p-5" style={{ background: "rgba(5,7,14,.75)" }}>
+          <div className="card hud p-5" style={{ background: "var(--panel)" }}>
             <p className="label" style={{ color: "var(--cyan)" }}>01 · brand style</p>
             <input className="field mt-3 w-full px-3 py-2 text-sm" placeholder="Brand name" value={style.brand} onChange={(e) => set("brand", e.target.value)} />
             <div className="mt-3 grid grid-cols-2 gap-3">
@@ -166,10 +166,10 @@ export default function StudioApp() {
             </div>
             <div className="mt-3 grid grid-cols-2 gap-3">
               <select className="field px-2.5 py-2 text-sm" value={style.font} onChange={(e) => set("font", e.target.value)}>
-                {FONTS.map((f) => <option key={f} value={f} style={{ background: "#0d1018" }}>{f}</option>)}
+                {FONTS.map((f) => <option key={f} value={f} style={{ background: "var(--card-solid)" }}>{f}</option>)}
               </select>
               <select className="field px-2.5 py-2 text-sm" value={style.corners} onChange={(e) => set("corners", e.target.value as BrandStyle["corners"])}>
-                {(["sharp", "soft", "round"] as const).map((c) => <option key={c} value={c} style={{ background: "#0d1018" }}>{c} corners</option>)}
+                {(["sharp", "soft", "round"] as const).map((c) => <option key={c} value={c} style={{ background: "var(--card-solid)" }}>{c} corners</option>)}
               </select>
             </div>
             <div className="mt-3 flex flex-wrap gap-1.5">
@@ -179,7 +179,7 @@ export default function StudioApp() {
             </div>
           </div>
 
-          <div className="card hud p-5" style={{ background: "rgba(5,7,14,.75)" }}>
+          <div className="card hud p-5" style={{ background: "var(--panel)" }}>
             <p className="label" style={{ color: "var(--cyan)" }}>02 · describe the section</p>
             <div className="mt-3 flex flex-wrap gap-1.5">
               {PRESETS.map((p) => (
@@ -211,8 +211,8 @@ export default function StudioApp() {
               {busy ? "Generating…" : `Generate section · ${costLabel}`}
             </button>
             {error && (
-              <p className="mt-3 rounded-lg border p-2.5 text-xs" style={{ borderColor: "rgba(255,92,122,.45)", color: "#ffb3c1", background: "rgba(255,92,122,.08)" }}>
-                {error.msg} {error.tokens && <a href="/pricing" className="font-semibold underline" style={{ color: "#a5f3fc" }}>Get demo tokens →</a>}
+              <p className="mt-3 rounded-lg border p-2.5 text-xs" style={{ borderColor: "color-mix(in srgb, var(--loss) 45%, transparent)", color: "var(--loss-ink)", background: "color-mix(in srgb, var(--loss) 8%, transparent)" }}>
+                {error.msg} {error.tokens && <a href="/pricing" className="font-semibold underline" style={{ color: "var(--accent-ink)" }}>Get demo tokens →</a>}
               </p>
             )}
           </div>
@@ -221,14 +221,14 @@ export default function StudioApp() {
             <div className="card p-5">
               <div className="flex items-center justify-between">
                 <p className="label muted">your sections · this browser</p>
-                <button type="button" className="mono text-[11px] muted hover:text-white" onClick={() => { persist([]); }}>clear</button>
+                <button type="button" className="mono text-[11px] muted hover-ink" onClick={() => { persist([]); }}>clear</button>
               </div>
               <ul className="mt-3 space-y-1.5">
                 {history.map((h) => (
                   <li key={h.id}>
                     <button type="button" onClick={() => { setCurrent(h); setVIdx(h.versions.length - 1); setStyle(h.style); }}
-                      className="flex w-full items-center justify-between rounded-lg px-2.5 py-2 text-left text-sm transition hover:bg-white/5"
-                      style={current?.id === h.id ? { background: "rgba(34,211,238,.08)" } : undefined}>
+                      className="flex w-full items-center justify-between rounded-lg px-2.5 py-2 text-left text-sm transition hover-tint"
+                      style={current?.id === h.id ? { background: "color-mix(in srgb, var(--cyan) 8%, transparent)" } : undefined}>
                       <span className="truncate">{h.name}</span>
                       <span className="mono shrink-0 text-[11px] muted">v{h.versions.length}</span>
                     </button>
@@ -240,12 +240,12 @@ export default function StudioApp() {
         </div>
 
         {/* ---------- Canvas ---------- */}
-        <div className="card hud flex min-h-[640px] flex-col overflow-hidden" style={{ background: "rgba(5,7,14,.75)" }}>
+        <div className="card hud flex min-h-[640px] flex-col overflow-hidden" style={{ background: "var(--panel)" }}>
           <div className="flex flex-wrap items-center justify-between gap-3 border-b px-4 py-3" style={{ borderColor: "var(--line)" }}>
             <div className="flex gap-1">
               {(["preview", "code", "install"] as const).map((t) => (
                 <button key={t} type="button" onClick={() => setTab(t)} className="label rounded-md px-2.5 py-1.5"
-                  style={{ background: tab === t ? "rgba(34,211,238,.12)" : "transparent", color: tab === t ? "#a5f3fc" : "var(--muted)", border: `1px solid ${tab === t ? "rgba(34,211,238,.4)" : "transparent"}` }}>
+                  style={{ background: tab === t ? "color-mix(in srgb, var(--cyan) 12%, transparent)" : "transparent", color: tab === t ? "var(--accent-ink)" : "var(--muted)", border: `1px solid ${tab === t ? "color-mix(in srgb, var(--cyan) 40%, transparent)" : "transparent"}` }}>
                   {t}
                 </button>
               ))}
@@ -253,7 +253,7 @@ export default function StudioApp() {
             <div className="flex items-center gap-2">
               {tab === "preview" && (["desktop", "mobile"] as const).map((d) => (
                 <button key={d} type="button" onClick={() => setDevice(d)} className="mono rounded-md px-2 py-1 text-[11px]"
-                  style={{ color: device === d ? "#fff" : "var(--muted)", background: device === d ? "rgba(255,255,255,.08)" : "transparent" }}>
+                  style={{ color: device === d ? "var(--ink)" : "var(--muted)", background: device === d ? "color-mix(in srgb, var(--ink) 8%, transparent)" : "transparent" }}>
                   {d === "desktop" ? "▭ desktop" : "▯ mobile"}
                 </button>
               ))}
@@ -277,19 +277,19 @@ export default function StudioApp() {
                 <span className="ml-auto flex items-center gap-1">
                   {current.versions.map((_, i) => (
                     <button key={i} type="button" onClick={() => setVIdx(i)} className="mono rounded px-1.5 py-0.5 text-[10.5px]"
-                      style={{ background: i === vIdx ? "rgba(34,211,238,.18)" : "transparent", color: i === vIdx ? "#a5f3fc" : "var(--muted)" }}>v{i + 1}</button>
+                      style={{ background: i === vIdx ? "color-mix(in srgb, var(--cyan) 18%, transparent)" : "transparent", color: i === vIdx ? "var(--accent-ink)" : "var(--muted)" }}>v{i + 1}</button>
                   ))}
                 </span>
               )}
             </div>
           )}
 
-          <div className="relative flex-1 overflow-auto" style={{ background: tab === "preview" ? "repeating-conic-gradient(rgba(255,255,255,.03) 0 25%, transparent 0 50%) 0 0/20px 20px" : "rgba(0,0,0,.35)" }}>
+          <div className="relative flex-1 overflow-auto" style={{ background: tab === "preview" ? "repeating-conic-gradient(color-mix(in srgb, var(--ink) 3%, transparent) 0 25%, transparent 0 50%) 0 0/20px 20px" : "var(--well)" }}>
             {busy && (
-              <div className="absolute inset-0 z-10 flex items-center justify-center backdrop-blur-sm" style={{ background: "rgba(4,5,10,.6)" }}>
+              <div className="absolute inset-0 z-10 flex items-center justify-center backdrop-blur-sm" style={{ background: "var(--overlay)" }}>
                 <div className="mono w-72 space-y-1.5 text-xs">
                   {STEPS.map((s, i) => (
-                    <div key={s} className="flex items-center gap-2" style={{ color: i < step ? "var(--good)" : i === step ? "#fff" : "#3f4a63" }}>
+                    <div key={s} className="flex items-center gap-2" style={{ color: i < step ? "var(--good)" : i === step ? "var(--ink)" : "var(--dim)" }}>
                       <span className="w-4">{i < step ? "✓" : i === step ? "›" : "·"}</span>
                       <span className={i === step ? "caret" : ""}>{s}</span>
                     </div>
@@ -300,7 +300,7 @@ export default function StudioApp() {
 
             {!version && !busy && (
               <div className="flex h-full min-h-[480px] flex-col items-center justify-center p-8 text-center">
-                <div className="font-display text-6xl" style={{ color: "rgba(34,211,238,.25)" }}>{"{% %}"}</div>
+                <div className="font-display text-6xl" style={{ color: "color-mix(in srgb, var(--cyan) 25%, transparent)" }}>{"{% %}"}</div>
                 <p className="mt-4 font-medium">Your section will appear here</p>
                 <p className="mt-1 max-w-sm text-sm muted">Pick a preset or describe what you want, set your brand style, and hit Generate.</p>
               </div>
@@ -320,18 +320,18 @@ export default function StudioApp() {
             )}
 
             {version && tab === "code" && (
-              <pre className="mono overflow-auto p-5 text-[12px] leading-relaxed" style={{ color: "#c7d2e6" }}>{version.section.liquid}</pre>
+              <pre className="term mono min-h-full overflow-auto p-5 text-[12px] leading-relaxed" style={{ color: "var(--ink-soft)" }}>{version.section.liquid}</pre>
             )}
 
             {version && tab === "install" && (
               <div className="max-w-xl space-y-4 p-6 text-sm">
                 <p className="font-display text-lg font-semibold">Add it to your Shopify store</p>
                 <ol className="list-decimal space-y-2 pl-5 muted">
-                  <li>In Shopify admin, go to <span className="text-white">Online Store → Themes</span>. Click <span className="text-white">⋯ → Duplicate</span> on your live theme to work safely on a copy.</li>
-                  <li>On the copy, choose <span className="text-white">⋯ → Edit code</span>.</li>
-                  <li>Under <span className="text-white">sections</span>, click <span className="text-white">Add a new section</span> and name it <span className="mono text-white">{slug(version.section.name)}</span>.</li>
-                  <li>Replace the contents with the downloaded <span className="mono text-white">.liquid</span> file and click <span className="text-white">Save</span>.</li>
-                  <li>Open <span className="text-white">Customize</span>, then <span className="text-white">Add section → {version.section.name}</span>. All its settings are editable there.</li>
+                  <li>In Shopify admin, go to <span className="text-ink">Online Store → Themes</span>. Click <span className="text-ink">⋯ → Duplicate</span> on your live theme to work safely on a copy.</li>
+                  <li>On the copy, choose <span className="text-ink">⋯ → Edit code</span>.</li>
+                  <li>Under <span className="text-ink">sections</span>, click <span className="text-ink">Add a new section</span> and name it <span className="mono text-ink">{slug(version.section.name)}</span>.</li>
+                  <li>Replace the contents with the downloaded <span className="mono text-ink">.liquid</span> file and click <span className="text-ink">Save</span>.</li>
+                  <li>Open <span className="text-ink">Customize</span>, then <span className="text-ink">Add section → {version.section.name}</span>. All its settings are editable there.</li>
                   <li>Preview it, then publish the copy when you&apos;re happy.</li>
                 </ol>
                 <p className="text-xs muted">Works with Online Store 2.0 themes, such as Dawn and most themes from 2021 onwards. The preview is an approximation, so always check in the theme editor.</p>

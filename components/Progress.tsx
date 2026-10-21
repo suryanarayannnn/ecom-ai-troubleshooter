@@ -24,7 +24,7 @@ const SCRIPT = [
   { at: 96, tag: "reason", text: "writing cross-cut root cause + action plan" },
   { at: 120, tag: "verify", text: "waiting on reasoning layer…" },
 ];
-const TAG_COLOR: Record<string, string> = { intake: "#8b5cf6", engine: "#22d3ee", reason: "#f472b6", verify: "#a3e635" };
+const TAG_COLOR: Record<string, string> = { intake: "var(--violet)", engine: "var(--cyan)", reason: "var(--pink)", verify: "var(--good)" };
 
 export default function Progress() {
   const [secs, setSecs] = useState(0);
@@ -39,31 +39,31 @@ export default function Progress() {
   const pct = Math.min(94, 6 + secs * 0.75);
 
   return (
-    <div className="card hud glow-border animate-fade-up mt-8 overflow-hidden" style={{ background: "rgba(5,7,14,.85)" }}>
+    <div className="term card hud glow-border animate-fade-up mt-8 overflow-hidden">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b px-5 py-3" style={{ borderColor: "var(--line)" }}>
         <div className="flex items-center gap-3">
           <span className="spin h-4 w-4 rounded-full border-2" style={{ borderColor: "var(--line-strong)", borderTopColor: "var(--cyan)" }} />
-          <span className="label" style={{ color: "#a5f3fc" }}>agent running</span>
+          <span className="label" style={{ color: "var(--accent-ink)" }}>agent running</span>
         </div>
         <div className="flex gap-1.5">
           {stages.map((s) => (
             <span key={s} className="label rounded-md px-2 py-1" style={{
               background: s === stage ? `${TAG_COLOR[s]}22` : "transparent",
-              color: s === stage ? TAG_COLOR[s] : stages.indexOf(s) < stages.indexOf(stage) ? "#6b7590" : "#3a4256",
+              color: s === stage ? TAG_COLOR[s] : stages.indexOf(s) < stages.indexOf(stage) ? "var(--muted)" : "var(--dim)",
               border: `1px solid ${s === stage ? `${TAG_COLOR[s]}66` : "var(--line)"}`,
             }}>{s}</span>
           ))}
         </div>
         <span className="mono text-xs muted">{Math.floor(secs / 60)}:{String(secs % 60).padStart(2, "0")}</span>
       </div>
-      <div className="h-1" style={{ background: "rgba(255,255,255,.04)" }}>
+      <div className="h-1" style={{ background: "color-mix(in srgb, var(--ink) 4%, transparent)" }}>
         <div className="scan-bar h-full transition-all duration-1000" style={{ width: `${pct}%`, background: "var(--grad)" }} />
       </div>
       <div className="mono max-h-72 space-y-1.5 overflow-y-auto p-5 text-[12px] sm:text-[13px]">
         {lines.map((l, i) => (
           <div key={i} className="animate-fade-up flex gap-3">
             <span className="w-14 shrink-0 text-right" style={{ color: TAG_COLOR[l.tag] }}>{l.tag}</span>
-            <span className={i === lines.length - 1 ? "caret" : ""} style={{ color: i === lines.length - 1 ? "#eef2ff" : "#7d879e" }}>{l.text}</span>
+            <span className={i === lines.length - 1 ? "caret" : ""} style={{ color: i === lines.length - 1 ? "var(--ink)" : "var(--muted)" }}>{l.text}</span>
           </div>
         ))}
       </div>

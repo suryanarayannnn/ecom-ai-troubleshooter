@@ -40,7 +40,7 @@ export default function EnginePanel({ engine, checks, analysis }: { engine: Engi
 
   return (
     <div className="grid gap-4 lg:grid-cols-2">
-      <section className="card hud p-5 sm:p-6" style={{ background: "rgba(5,7,14,.7)" }}>
+      <section className="card hud p-5 sm:p-6" style={{ background: "var(--panel)" }}>
         <div className="flex items-center justify-between gap-3">
           <p className="label" style={{ color: "var(--cyan)" }}>engine trace · deterministic</p>
           <button type="button" onClick={downloadSidecar} className="btn-ghost mono rounded-lg px-3 py-1.5 text-[11px]">
@@ -61,10 +61,10 @@ export default function EnginePanel({ engine, checks, analysis }: { engine: Engi
                 <p className="text-xs muted">{engine.downstream_sgmv ? "S/GMV is downstream" : "largest flagged ₹ impact"}</p>
               </div>
             </div>
-            <div className="mono mt-4 max-h-56 space-y-1 overflow-y-auto rounded-lg p-3 text-[11.5px] leading-relaxed" style={{ background: "rgba(0,0,0,.4)" }}>
+            <div className="term mono mt-4 max-h-56 space-y-1 overflow-y-auto rounded-lg p-3 text-[11.5px] leading-relaxed" style={{ background: "var(--well)" }}>
               {engine.trace.map((t, i) => (
-                <div key={i} style={{ color: /FLAGGED|fallback|DIRECTIONAL/.test(t) ? "#ff8fa3" : /→ W|benchmark: .*n=/.test(t) && !/no qualifying/.test(t) ? "#7ee8f7" : "#7d879e" }}>
-                  <span style={{ color: "#3f4a63" }}>{String(i + 1).padStart(2, "0")} </span>{t}
+                <div key={i} style={{ color: /FLAGGED|fallback|DIRECTIONAL/.test(t) ? "var(--loss-ink)" : /→ W|benchmark: .*n=/.test(t) && !/no qualifying/.test(t) ? "var(--accent-ink)" : "var(--muted)" }}>
+                  <span style={{ color: "var(--dim)" }}>{String(i + 1).padStart(2, "0")} </span>{t}
                 </div>
               ))}
             </div>
@@ -79,7 +79,7 @@ export default function EnginePanel({ engine, checks, analysis }: { engine: Engi
         )}
       </section>
 
-      <section className="card hud p-5 sm:p-6" style={{ background: "rgba(5,7,14,.7)" }}>
+      <section className="card hud p-5 sm:p-6" style={{ background: "var(--panel)" }}>
         <div className="flex items-center justify-between">
           <p className="label" style={{ color: "var(--good)" }}>verifier · guardrails</p>
           <span className="mono text-xs muted">{passed}/{checks.length} ok</span>

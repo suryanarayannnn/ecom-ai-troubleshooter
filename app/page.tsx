@@ -205,12 +205,12 @@ export default function Home() {
         <Reveal className="mt-20">
           <p className="label text-center muted">inside the reasoning layer</p>
         </Reveal>
-        <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="rainbow mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {STEP_LIST.map((s, i) => (
             <Reveal key={s.t} delay={i * 60}>
               <div className="card spot lift h-full p-4">
                 <div className="flex items-center gap-3">
-                  <span className="mono text-xs" style={{ color: "var(--cyan)" }}>S{i + 1}</span>
+                  <span className="tint-text mono text-xs font-bold">S{i + 1}</span>
                   <p className="font-medium">{s.t}</p>
                 </div>
                 <p className="mt-2 text-xs leading-relaxed muted">{s.d}</p>
@@ -228,7 +228,7 @@ export default function Home() {
             title="Built to not hallucinate."
             sub="Each failure mode seen in real loss cases has a matching check. Live checks run in code on every report. Framework rules are enforced inside the reasoning method."
           />
-          <div className="mt-14 grid gap-3 md:grid-cols-3">
+          <div className="rainbow mt-14 grid gap-3 md:grid-cols-3">
             {GUARDS.map((g, i) => (
               <Reveal key={g.t} delay={i * 50}>
                 <div className="card spot lift h-full p-5">
@@ -268,7 +268,7 @@ export default function Home() {
                 <p className="font-display mt-5 text-2xl font-semibold">{c.title}</p>
                 <p className="mt-2 text-sm muted">{c.hook}</p>
                 <div className="mt-6 flex items-center justify-between text-xs">
-                  <span className="muted">root cause: <span className="mono text-white blur-[4px] transition group-hover:blur-0">{c.pattern}</span></span>
+                  <span className="muted">root cause: <span className="mono text-ink blur-[4px] transition group-hover:blur-0">{c.pattern}</span></span>
                   <span className="mono font-semibold transition-transform group-hover:translate-x-1" style={{ color: c.accent }}>load →</span>
                 </div>
               </button>
@@ -283,7 +283,7 @@ export default function Home() {
           <SectionHead kicker="launch" title={<>Brief the <span className="gradient-text">agent</span>.</>} sub="Four questions for context, then drop your exports. The agent shows which steps your data unlocks before it starts." />
 
           <Reveal className="mt-14">
-            <div className="card hud glow-border p-5 sm:p-8" style={{ background: "rgba(5,7,14,.75)" }}>
+            <div className="card hud glow-border p-5 sm:p-8" style={{ background: "var(--panel)" }}>
               <div className="grid gap-10 lg:grid-cols-2">
                 {/* Questions */}
                 <div className="space-y-7">
@@ -348,7 +348,7 @@ export default function Home() {
                           <span className="mono truncate">{f.name}</span>
                           <span className="flex shrink-0 items-center gap-3">
                             <span style={{ color: f.kind === "Unrecognised" ? "var(--warn)" : "var(--good)" }}>{f.kind}</span>
-                            <button type="button" className="muted hover:text-white" onClick={() => setFiles((cur) => cur.filter((_, j) => j !== i))}>✕</button>
+                            <button type="button" className="muted hover-ink" onClick={() => setFiles((cur) => cur.filter((_, j) => j !== i))}>✕</button>
                           </span>
                         </li>
                       ))}
@@ -363,7 +363,7 @@ export default function Home() {
                   />
 
                   {/* Unlock matrix */}
-                  <div className="mt-4 rounded-xl border p-3.5" style={{ borderColor: "var(--line)", background: "rgba(0,0,0,.3)" }}>
+                  <div className="mt-4 rounded-xl border p-3.5" style={{ borderColor: "var(--line)", background: "var(--well)" }}>
                     <div className="flex items-center justify-between">
                       <p className="label muted">step unlock matrix</p>
                       <p className="mono text-[11px]" style={{ color: hasPnl ? "var(--good)" : "var(--warn)" }}>{hasPnl ? "PnL ✓ ready" : "PnL required"}</p>
@@ -374,9 +374,9 @@ export default function Home() {
                         return (
                           <div key={name} title={name} className="flex flex-col items-center gap-1">
                             <div className="mono flex h-8 w-full items-center justify-center rounded-md text-[11px] font-semibold transition-all duration-300" style={{
-                              background: on ? "linear-gradient(135deg, rgba(34,211,238,.25), rgba(139,92,246,.25))" : "rgba(255,255,255,.03)",
-                              color: on ? "#eef2ff" : "#3f4a63",
-                              boxShadow: on ? "inset 0 0 0 1px rgba(34,211,238,.6), 0 0 14px -4px rgba(34,211,238,.8)" : "inset 0 0 0 1px var(--line)",
+                              background: on ? "linear-gradient(135deg, color-mix(in srgb, var(--cyan) 25%, transparent), color-mix(in srgb, var(--violet) 25%, transparent))" : "color-mix(in srgb, var(--ink) 3%, transparent)",
+                              color: on ? "var(--ink)" : "var(--dim)",
+                              boxShadow: on ? "inset 0 0 0 1px color-mix(in srgb, var(--cyan) 60%, transparent), 0 0 14px -4px color-mix(in srgb, var(--cyan) 80%, transparent)" : "inset 0 0 0 1px var(--line)",
                             }}>{i}</div>
                           </div>
                         );
@@ -386,7 +386,7 @@ export default function Home() {
                       {SOURCES.map((s) => {
                         const on = found.includes(s);
                         return (
-                          <span key={s.id} className="rounded px-1.5 py-0.5 text-[10.5px]" style={{ color: on ? "var(--good)" : "#4f5870", background: on ? "rgba(163,230,53,.08)" : "transparent" }}>
+                          <span key={s.id} className="rounded px-1.5 py-0.5 text-[10.5px]" style={{ color: on ? "var(--good)" : "var(--dim)", background: on ? "color-mix(in srgb, var(--good) 8%, transparent)" : "transparent" }}>
                             {on ? "✓" : "·"} {s.label}
                           </span>
                         );
@@ -416,10 +416,10 @@ export default function Home() {
               </div>
 
               {error && (
-                <p className="animate-fade-up mt-5 rounded-xl border p-3.5 text-sm" style={{ borderColor: "rgba(255,92,122,.5)", background: "rgba(255,92,122,.08)", color: "#ffb3c1" }}>
+                <p className="animate-fade-up mt-5 rounded-xl border p-3.5 text-sm" style={{ borderColor: "color-mix(in srgb, var(--loss) 50%, transparent)", background: "color-mix(in srgb, var(--loss) 8%, transparent)", color: "var(--loss-ink)" }}>
                   {error}
                   {noTokens && (
-                    <> <a href="/pricing" className="ml-1 font-semibold underline" style={{ color: "#a5f3fc" }}>Get demo tokens →</a></>
+                    <> <a href="/pricing" className="ml-1 font-semibold underline" style={{ color: "var(--accent-ink)" }}>Get demo tokens →</a></>
                   )}
                 </p>
               )}
@@ -444,7 +444,7 @@ export default function Home() {
           <Reveal>
             <a href="/studio" className="card hud glow-border spot group grid items-center gap-8 overflow-hidden p-8 sm:p-10 md:grid-cols-[1.2fr_1fr]">
               <div>
-                <p className="label" style={{ color: "#f9a8d4" }}>{"// new · section studio"}</p>
+                <p className="label" style={{ color: "var(--pink-ink)" }}>{"// new · section studio"}</p>
                 <h2 className="font-display mt-3 text-3xl font-bold sm:text-4xl">Fixed the leak? <span className="gradient-text">Rebuild the storefront.</span></h2>
                 <p className="mt-4 muted">
                   Describe a Shopify section in plain English: hero, product grid, testimonials, FAQ, trust badges. The AI writes
@@ -454,13 +454,13 @@ export default function Home() {
                   Open Section Studio →{FEATURES.tokens && <span className="ml-2 font-normal muted">{PRICING.freeThemePerDay} free per day</span>}
                 </p>
               </div>
-              <div className="mono rounded-xl border p-4 text-[11.5px] leading-relaxed" style={{ borderColor: "var(--line)", background: "rgba(0,0,0,.45)", color: "#7d879e" }}>
-                <div><span style={{ color: "#f472b6" }}>{"{%"}</span> schema <span style={{ color: "#f472b6" }}>{"%}"}</span></div>
-                <div className="pl-3">{"{"} <span style={{ color: "#7ee8f7" }}>&quot;name&quot;</span>: <span style={{ color: "#a3e635" }}>&quot;Hero banner&quot;</span>,</div>
-                <div className="pl-3"><span style={{ color: "#7ee8f7" }}>&quot;settings&quot;</span>: [ … 12 settings ],</div>
-                <div className="pl-3"><span style={{ color: "#7ee8f7" }}>&quot;blocks&quot;</span>: [ button × 2 ],</div>
-                <div className="pl-3"><span style={{ color: "#7ee8f7" }}>&quot;presets&quot;</span>: [ … ] {"}"}</div>
-                <div><span style={{ color: "#f472b6" }}>{"{%"}</span> endschema <span style={{ color: "#f472b6" }}>{"%}"}</span></div>
+              <div className="term mono rounded-xl border p-4 text-[11.5px] leading-relaxed" style={{ borderColor: "var(--line)", background: "var(--well)", color: "var(--muted)" }}>
+                <div><span style={{ color: "var(--pink)" }}>{"{%"}</span> schema <span style={{ color: "var(--pink)" }}>{"%}"}</span></div>
+                <div className="pl-3">{"{"} <span style={{ color: "var(--accent-ink)" }}>&quot;name&quot;</span>: <span style={{ color: "var(--good)" }}>&quot;Hero banner&quot;</span>,</div>
+                <div className="pl-3"><span style={{ color: "var(--accent-ink)" }}>&quot;settings&quot;</span>: [ … 12 settings ],</div>
+                <div className="pl-3"><span style={{ color: "var(--accent-ink)" }}>&quot;blocks&quot;</span>: [ button × 2 ],</div>
+                <div className="pl-3"><span style={{ color: "var(--accent-ink)" }}>&quot;presets&quot;</span>: [ … ] {"}"}</div>
+                <div><span style={{ color: "var(--pink)" }}>{"{%"}</span> endschema <span style={{ color: "var(--pink)" }}>{"%}"}</span></div>
                 <div className="mt-2" style={{ color: "var(--good)" }}>✓ schema valid · ✓ presets · ✓ scoped CSS</div>
               </div>
             </a>
@@ -471,7 +471,7 @@ export default function Home() {
       {/* Roadmap */}
       <section className="mx-auto max-w-6xl px-4 py-28">
         <SectionHead kicker="roadmap" title="Where this goes next." />
-        <div className="mt-14 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="rainbow mt-14 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {ROADMAP.map((r, i) => (
             <Reveal key={r.t} delay={i * 80}>
               <div className={`card spot h-full p-5 ${r.on ? "glow-border" : ""}`}>

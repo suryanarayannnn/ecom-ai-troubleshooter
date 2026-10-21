@@ -108,7 +108,7 @@ export default function ChatWidget() {
         onClick={() => setOpen((o) => !o)}
         aria-label={open ? "Close assistant" : "Open assistant"}
         className="fixed bottom-5 right-5 z-[60] flex h-14 items-center gap-2 rounded-full pl-4 pr-5 text-sm font-semibold transition-transform hover:scale-105"
-        style={{ background: "var(--grad)", color: "#04050a", boxShadow: "0 10px 40px -8px rgba(34,211,238,.7)" }}
+        style={{ background: "var(--grad)", color: "var(--on-grad)", boxShadow: "0 10px 40px -8px color-mix(in srgb, var(--cyan) 70%, transparent)" }}
       >
         <span className="relative flex h-6 w-6 items-center justify-center">
           {!open && <span className="pulse-dot absolute inset-0 rounded-full" />}
@@ -122,10 +122,10 @@ export default function ChatWidget() {
         className="fixed bottom-24 right-3 z-[60] flex w-[calc(100vw-24px)] max-w-[400px] flex-col overflow-hidden rounded-2xl border transition-all duration-300 sm:right-5"
         style={{
           height: "min(600px, calc(100vh - 130px))",
-          borderColor: "rgba(34,211,238,.35)",
-          background: "rgba(6,8,15,.92)",
+          borderColor: "color-mix(in srgb, var(--cyan) 35%, transparent)",
+          background: "var(--panel)",
           backdropFilter: "blur(18px)",
-          boxShadow: "0 30px 80px -20px rgba(0,0,0,.8), 0 0 60px -20px rgba(34,211,238,.35)",
+          boxShadow: "0 30px 80px -20px var(--well), 0 0 60px -20px color-mix(in srgb, var(--cyan) 35%, transparent)",
           opacity: open ? 1 : 0,
           transform: open ? "none" : "translateY(16px) scale(.97)",
           pointerEvents: open ? "auto" : "none",
@@ -136,7 +136,7 @@ export default function ChatWidget() {
         {/* Header */}
         <div className="flex items-center justify-between border-b px-4 py-3" style={{ borderColor: "var(--line)" }}>
           <div className="flex items-center gap-3">
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl text-lg" style={{ background: "var(--grad)", color: "#04050a" }}>◎</span>
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl text-lg" style={{ background: "var(--grad)", color: "var(--on-grad)" }}>◎</span>
             <div>
               <p className="font-display font-semibold leading-tight">Lens</p>
               <p className="label" style={{ fontSize: 9.5, color: mode === "offline" ? "var(--warn)" : "var(--good)" }}>
@@ -144,7 +144,7 @@ export default function ChatWidget() {
               </p>
             </div>
           </div>
-          <button type="button" onClick={clear} className="mono text-[11px] muted hover:text-white">reset</button>
+          <button type="button" onClick={clear} className="mono text-[11px] muted hover-ink">reset</button>
         </div>
 
         {/* Messages */}
@@ -154,8 +154,8 @@ export default function ChatWidget() {
               <div
                 className="max-w-[85%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed"
                 style={m.role === "user"
-                  ? { background: "linear-gradient(135deg, rgba(34,211,238,.22), rgba(139,92,246,.25))", border: "1px solid rgba(34,211,238,.35)" }
-                  : { background: "rgba(255,255,255,.04)", border: "1px solid var(--line)" }}
+                  ? { background: "linear-gradient(135deg, color-mix(in srgb, var(--cyan) 22%, transparent), color-mix(in srgb, var(--violet) 25%, transparent))", border: "1px solid color-mix(in srgb, var(--cyan) 35%, transparent)" }
+                  : { background: "color-mix(in srgb, var(--ink) 4%, transparent)", border: "1px solid var(--line)" }}
               >
                 {m.content ? (
                   <div className="chat-md">
@@ -163,11 +163,11 @@ export default function ChatWidget() {
                       components={{
                         a: ({ href = "", children }) =>
                           href.startsWith("#") || href.startsWith("/") ? (
-                            <button type="button" onClick={() => go(href)} className="mx-0.5 inline-flex items-center rounded-md px-1.5 py-0.5 text-xs font-medium" style={{ background: "rgba(34,211,238,.12)", color: "#7ee8f7", border: "1px solid rgba(34,211,238,.35)" }}>
+                            <button type="button" onClick={() => go(href)} className="mx-0.5 inline-flex items-center rounded-md px-1.5 py-0.5 text-xs font-medium" style={{ background: "color-mix(in srgb, var(--cyan) 12%, transparent)", color: "var(--accent-ink)", border: "1px solid color-mix(in srgb, var(--cyan) 35%, transparent)" }}>
                               {children} ↘
                             </button>
                           ) : (
-                            <a href={href} target="_blank" rel="noreferrer" className="underline" style={{ color: "#7ee8f7" }}>{children}</a>
+                            <a href={href} target="_blank" rel="noreferrer" className="underline" style={{ color: "var(--accent-ink)" }}>{children}</a>
                           ),
                       }}
                     >

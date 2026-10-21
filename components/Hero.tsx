@@ -7,20 +7,20 @@ const WORDS = ["RTO spikes", "ad spend leaks", "COGS creep", "cancel surges", "s
 
 // Replay of the engine on the "Women Only" sample case.
 const LOG: { tag: string; text: string; tone?: string }[] = [
-  { tag: "$", text: "losslens run --store demo-ethnic-co", tone: "#eef2ff" },
+  { tag: "$", text: "losslens run --store demo-ethnic-co", tone: "var(--ink)" },
   { tag: "intake", text: "10 PnL weeks · 8 data sources · 0 required missing" },
   { tag: "engine", text: "benchmark W33–W36 · 6-mo · ±10% band · profitable · n=4" },
-  { tag: "engine", text: "RTO% 30.83 → 48.2 (+17.37pp) FLAGGED · ₹77,957", tone: "#ff5c7a" },
-  { tag: "engine", text: "S/GMV +2.4pp · downstream of RTO", tone: "#fbbf24" },
+  { tag: "engine", text: "RTO% 30.83 → 48.2 (+17.37pp) FLAGGED · ₹77,957", tone: "var(--loss)" },
+  { tag: "engine", text: "S/GMV +2.4pp · downstream of RTO", tone: "var(--warn)" },
   { tag: "reason", text: "fulfilment O2S 1.3d · S2A 3.9d · FAD 59% → ruled out" },
-  { tag: "reason", text: "audience male spend share 6% → 39%", tone: "#ff5c7a" },
+  { tag: "reason", text: "audience male spend share 6% → 39%", tone: "var(--loss)" },
   { tag: "reason", text: "campaign 'Women_Only' delivered 64% to men" },
-  { tag: "verify", text: "numbers traced to PnL ✓ · benchmark valid ✓", tone: "#a3e635" },
-  { tag: "result", text: "ROOT CAUSE → Campaign × Gender", tone: "#22d3ee" },
+  { tag: "verify", text: "numbers traced to PnL ✓ · benchmark valid ✓", tone: "var(--good)" },
+  { tag: "result", text: "ROOT CAUSE → Campaign × Gender", tone: "var(--cyan)" },
 ];
 
 const TAG_COLOR: Record<string, string> = {
-  $: "#22d3ee", intake: "#8b5cf6", engine: "#22d3ee", reason: "#f472b6", verify: "#a3e635", result: "#22d3ee",
+  $: "var(--cyan)", intake: "var(--violet)", engine: "var(--cyan)", reason: "var(--pink)", verify: "var(--good)", result: "var(--cyan)",
 };
 
 function Terminal() {
@@ -42,12 +42,12 @@ function Terminal() {
   }, [shown, typed]);
 
   return (
-    <div className="card hud glow-border relative overflow-hidden text-left" style={{ background: "rgba(5,7,14,.82)" }}>
+    <div className="term card hud glow-border relative overflow-hidden text-left">
       <div className="flex items-center justify-between border-b px-4 py-2.5" style={{ borderColor: "var(--line)" }}>
         <div className="flex gap-1.5">
-          <span className="h-2.5 w-2.5 rounded-full" style={{ background: "#ff5c7a" }} />
-          <span className="h-2.5 w-2.5 rounded-full" style={{ background: "#fbbf24" }} />
-          <span className="h-2.5 w-2.5 rounded-full" style={{ background: "#a3e635" }} />
+          <span className="h-2.5 w-2.5 rounded-full" style={{ background: "var(--loss)" }} />
+          <span className="h-2.5 w-2.5 rounded-full" style={{ background: "var(--warn)" }} />
+          <span className="h-2.5 w-2.5 rounded-full" style={{ background: "var(--good)" }} />
         </div>
         <span className="label muted">agent://losslens · demo replay</span>
       </div>
@@ -55,13 +55,13 @@ function Terminal() {
         {LOG.slice(0, shown).map((l, i) => (
           <div key={i} className="flex gap-3">
             <span className="w-14 shrink-0 text-right" style={{ color: TAG_COLOR[l.tag] }}>{l.tag}</span>
-            <span style={{ color: l.tone ?? "#b6bfd4" }}>{l.text}</span>
+            <span style={{ color: l.tone ?? "var(--ink-soft)" }}>{l.text}</span>
           </div>
         ))}
         {shown < LOG.length && (
           <div className="flex gap-3">
             <span className="w-14 shrink-0 text-right" style={{ color: TAG_COLOR[LOG[shown].tag] }}>{LOG[shown].tag}</span>
-            <span className="caret" style={{ color: LOG[shown].tone ?? "#b6bfd4" }}>{typed}</span>
+            <span className="caret" style={{ color: LOG[shown].tone ?? "var(--ink-soft)" }}>{typed}</span>
           </div>
         )}
       </div>
@@ -80,15 +80,15 @@ export default function Hero() {
     <section className="relative overflow-hidden pt-28 pb-20 sm:pt-36 sm:pb-28">
       <div className="grid-bg absolute inset-0 -z-10" />
       <div className="floor -z-10" />
-      <div className="orb -z-10" style={{ width: 480, height: 480, left: "-10%", top: "-12%", background: "#22d3ee" }} />
-      <div className="orb -z-10" style={{ width: 440, height: 440, right: "-8%", top: "5%", background: "#8b5cf6", animationDelay: "-6s" }} />
-      <div className="orb -z-10" style={{ width: 300, height: 300, left: "40%", top: "40%", background: "#f472b6", opacity: 0.22, animationDelay: "-12s" }} />
+      <div className="orb -z-10" style={{ width: 480, height: 480, left: "-10%", top: "-12%", background: "var(--cyan)" }} />
+      <div className="orb -z-10" style={{ width: 440, height: 440, right: "-8%", top: "5%", background: "var(--violet)", animationDelay: "-6s" }} />
+      <div className="orb -z-10" style={{ width: 300, height: 300, left: "40%", top: "40%", background: "var(--pink)", opacity: 0.22, animationDelay: "-12s" }} />
 
       <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 lg:grid-cols-[1.05fr_1fr]">
         <div className="text-center lg:text-left">
-          <div className="animate-fade-up inline-flex items-center gap-2 rounded-full border px-3 py-1" style={{ borderColor: "rgba(34,211,238,.35)", background: "rgba(34,211,238,.06)" }}>
+          <div className="animate-fade-up inline-flex items-center gap-2 rounded-full border px-3 py-1" style={{ borderColor: "color-mix(in srgb, var(--cyan) 35%, transparent)", background: "color-mix(in srgb, var(--cyan) 6%, transparent)" }}>
             <span className="pulse-dot h-2 w-2 rounded-full" style={{ background: "var(--cyan)" }} />
-            <span className="label" style={{ color: "#a5f3fc" }}>Agent online · e-commerce & Shopify</span>
+            <span className="label" style={{ color: "var(--accent-ink)" }}>Agent online · e-commerce & Shopify</span>
           </div>
 
           <h1 className="font-display animate-fade-up mt-6 text-5xl font-bold leading-[1.0] sm:text-6xl lg:text-7xl" style={{ animationDelay: "80ms" }}>
@@ -105,10 +105,10 @@ export default function Hero() {
           </p>
 
           <p className="animate-fade-up mx-auto mt-5 max-w-xl text-base muted sm:text-lg lg:mx-0" style={{ animationDelay: "200ms" }}>
-            <strong className="text-white">LossLens</strong> is an AI agent that finds why your store lost money.
-            Drop in your exports: a <span className="text-white">deterministic engine</span> computes the numbers,
-            an <span className="text-white">AI analyst</span> reasons through 8 steps, and a{" "}
-            <span className="text-white">verifier</span> catches anything it can&apos;t trace. Out comes the exact root cause and a ₹ fix plan.
+            <strong className="text-ink">LossLens</strong> is an AI agent that finds why your store lost money.
+            Drop in your exports: a <span className="text-ink">deterministic engine</span> computes the numbers,
+            an <span className="text-ink">AI analyst</span> reasons through 8 steps, and a{" "}
+            <span className="text-ink">verifier</span> catches anything it can&apos;t trace. Out comes the exact root cause and a ₹ fix plan.
           </p>
 
           <div className="animate-fade-up mt-9 flex flex-wrap justify-center gap-3 lg:justify-start" style={{ animationDelay: "260ms" }}>
@@ -118,7 +118,7 @@ export default function Hero() {
 
           <p className="animate-fade-up mt-8 text-xs muted" style={{ animationDelay: "320ms" }}>
             Designed & engineered by{" "}
-            <a href={SITE.linkedin} target="_blank" rel="noreferrer" className="text-white underline decoration-white/30 underline-offset-4 hover:decoration-white">
+            <a href={SITE.linkedin} target="_blank" rel="noreferrer" className="text-ink underline decoration-2 underline-offset-4">
               {SITE.authorName}
             </a>
           </p>
