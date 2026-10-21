@@ -6,7 +6,7 @@ import { SITE } from "@/lib/site";
 const WORDS = ["RTO spikes", "S/GMV blowouts", "COGS creep", "cancel surges", "silent RTO"];
 
 const STATS = [
-  { value: 8, suffix: "", label: "diagnostic steps" },
+  { value: 8, suffix: "", label: "automated checks" },
   { value: 12, suffix: "+", label: "live case studies" },
   { value: 4, suffix: "", label: "problem lenses" },
   { value: 9, suffix: "", label: "failure modes guarded" },
@@ -46,7 +46,7 @@ export default function Hero() {
       <div className="mx-auto max-w-6xl px-4 text-center">
         <div className="animate-fade-up inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs" style={{ borderColor: "var(--line-strong)", background: "rgba(255,255,255,.04)" }}>
           <span className="pulse-dot h-2 w-2 rounded-full" style={{ background: "var(--loss)" }} />
-          AI root-cause analyst for D2C Facebook sellers
+          Automated profit troubleshooter for e-commerce & Shopify stores
         </div>
 
         <h1 className="font-display animate-fade-up mt-6 text-4xl font-bold leading-[1.05] sm:text-6xl md:text-7xl" style={{ animationDelay: "80ms" }}>
@@ -60,9 +60,9 @@ export default function Hero() {
         </h1>
 
         <p className="animate-fade-up mx-auto mt-6 max-w-2xl text-base sm:text-lg muted" style={{ animationDelay: "160ms" }}>
-          Answer a few questions, paste your PnL, campaign, audience, state and fulfilment data, and get a
-          verified <strong className="text-white">L3 root cause</strong> (Campaign × Dimension) with a
-          ₹-quantified action plan in minutes.
+          <strong className="text-white">LossLens</strong> troubleshoots your store like a senior growth analyst would.
+          Answer a few questions, paste your PnL, ad campaign, audience, state and fulfilment data, and get the
+          exact root cause (for example, <em>which campaign × which audience</em>) with a ₹-quantified fix plan in minutes.
         </p>
 
         <div className="animate-fade-up mt-9 flex flex-wrap justify-center gap-3" style={{ animationDelay: "240ms" }}>

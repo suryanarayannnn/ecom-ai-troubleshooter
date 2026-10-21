@@ -1,13 +1,15 @@
-# L3 PnL Diagnostic: AI root-cause analysis for D2C Facebook sellers
+# LossLens: Automated Profit Troubleshooter for E-commerce & Shopify Stores
 
-Paste a seller's weekly PnL and supporting breakdowns (campaigns, gender, age, platform, state, product, fulfilment, changelog). The tool runs a strict **8-step L3 diagnostic** and returns:
+**Live:** https://ecom-ai-troubleshooter.vercel.app · **Built by** [S Surya Narayan](https://www.linkedin.com/in/ssuryanarayan)
 
-- **A dashboard**: problem-metric comparison (RTO, S/GMV, COGS, Cancel) with ₹ impact, state RTO shifts, campaign spend shift, and verdicts for every layer (✅ / ⚠️ / 🔴)
-- **An L3 root cause**: Campaign × Dimension (gender, product, geo, catalogue, carrier)
+When an online store has a losing week, LossLens finds out why. Answer four quick questions, then paste the store's weekly PnL and any supporting data you have (ad campaigns, gender, age, platform, state, product, fulfilment, catalogue changelog). LossLens runs a strict **8-step troubleshooting method** and returns:
+
+- **A dashboard**: the four problem metrics (RTO, Spend/GMV, COGS, Cancel) with their ₹ impact, state RTO shifts, campaign spend shifts, and a verdict for every layer (✅ / ⚠️ / 🔴)
+- **A cross-cut root cause**: campaign × one other factor (gender, product, geo, catalogue or carrier)
 - **A prioritised action plan** with a recovery target
 - **The full case study** as markdown (copy or download)
 
-> The diagnostic framework is in [`prompts/l3-diagnostic.md`](prompts/l3-diagnostic.md). I built it from 12+ live seller case studies.
+> The troubleshooting framework is in [`prompts/l3-diagnostic.md`](prompts/l3-diagnostic.md). I built it from 12+ live seller case studies.
 
 ## How it works
 

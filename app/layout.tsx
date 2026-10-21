@@ -6,9 +6,9 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const grotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-grotesk" });
 
 export const metadata: Metadata = {
-  title: "L3 Diagnostic — find why a D2C week lost money",
+  title: "LossLens — Automated Profit Troubleshooter for E-commerce & Shopify Stores",
   description:
-    "AI root-cause analyst for Facebook D2C sellers. Paste PnL, campaign, audience, geo and fulfilment data; get an 8-step L3 case study with a ₹-quantified action plan. Built by S Surya Narayan.",
+    "LossLens finds why an online store's week lost money. Paste PnL, ad campaign, audience, geo and fulfilment data; get an automated 8-step root-cause report with a ₹-quantified action plan. Built by S Surya Narayan.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

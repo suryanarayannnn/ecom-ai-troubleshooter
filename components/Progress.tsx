@@ -10,7 +10,7 @@ export const STEP_LIST = [
   { t: "Audience (GASP)", d: "Gender, age and platform shifts and their mechanical chunks" },
   { t: "Product mix", d: "Concentration, anchor SKUs, and the demand-saturation fingerprint" },
   { t: "State / geo", d: "Geo expansion vs within-state spikes in previously clean states" },
-  { t: "Campaign L3 cross", d: "Workhorse defunding, targeting compliance, and Campaign × Dimension" },
+  { t: "Campaign cross-cut", d: "Workhorse defunding, targeting compliance, and Campaign × Dimension" },
 ];
 
 // The API call is a single request, so this is a paced visual of the method,
@@ -30,7 +30,7 @@ export default function Progress() {
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <span className="spin h-5 w-5 rounded-full border-2" style={{ borderColor: "var(--line-strong)", borderTopColor: "var(--loss)" }} />
-          <p className="font-display text-lg font-semibold">Running the 8-step diagnostic…</p>
+          <p className="font-display text-lg font-semibold">LossLens is troubleshooting your store…</p>
         </div>
         <span className="font-mono text-xs muted">{Math.floor(secs / 60)}:{String(secs % 60).padStart(2, "0")}</span>
       </div>

@@ -102,8 +102,8 @@ export default function Home() {
       <nav className="fixed inset-x-0 top-0 z-50 border-b backdrop-blur-xl" style={{ borderColor: "var(--line)", background: "rgba(7,8,13,.6)" }}>
         <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4">
           <a href="#" className="font-display flex items-center gap-2 font-bold">
-            <span className="flex h-7 w-7 items-center justify-center rounded-lg text-xs" style={{ background: "linear-gradient(135deg,#ff6b4a,#8b6cff)" }}>L3</span>
-            <span>Diagnostic</span>
+            <span className="flex h-7 w-7 items-center justify-center rounded-lg text-xs" style={{ background: "linear-gradient(135deg,#ff6b4a,#8b6cff)" }}>◎</span>
+            <span>Loss<span className="gradient-text">Lens</span></span>
           </a>
           <div className="flex items-center gap-1 text-sm sm:gap-5">
             <a href="#how" className="hidden muted hover:text-white sm:inline">How it works</a>
@@ -266,7 +266,7 @@ export default function Home() {
                   <button type="button" onClick={reset} className="btn-ghost rounded-xl px-4 py-2.5 text-sm">Reset</button>
                 )}
                 <button type="button" onClick={analyze} disabled={loading || data.trim().length < 50} className="btn-primary rounded-xl px-6 py-2.5 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-40">
-                  {loading ? "Diagnosing…" : "Run 8-step diagnostic →"}
+                  {loading ? "Troubleshooting…" : "Troubleshoot my store →"}
                 </button>
               </div>
             </div>
@@ -302,9 +302,9 @@ export default function Home() {
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-6 text-center sm:flex-row sm:text-left">
           <div>
             <p className="font-display text-lg font-semibold">
-              Built by <a href={SITE.linkedin} target="_blank" rel="noreferrer" className="gradient-text">{SITE.authorName}</a>
+              LossLens · built by <a href={SITE.linkedin} target="_blank" rel="noreferrer" className="gradient-text">{SITE.authorName}</a>
             </p>
-            <p className="mt-1 text-xs muted">The diagnostic framework is distilled from 12+ live seller case studies. Sample sellers are fictional.</p>
+            <p className="mt-1 text-xs muted">The troubleshooting framework is distilled from 12+ live seller case studies. Sample sellers are fictional.</p>
           </div>
           <div className="flex gap-3 text-sm">
             <a href={SITE.linkedin} target="_blank" rel="noreferrer" className="btn-ghost rounded-lg px-4 py-2">LinkedIn</a>

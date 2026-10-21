@@ -12,7 +12,7 @@ export default function Report({ markdown }: { markdown: string }) {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "l3-diagnostic-report.md";
+    a.download = "losslens-report.md";
     a.click();
     URL.revokeObjectURL(url);
   }

@@ -77,7 +77,7 @@ export default function Dashboard({ d }: { d: D }) {
 
       {/* Root cause */}
       <section className="card glow-border p-5 sm:p-7" style={{ background: "linear-gradient(120deg, rgba(255,107,74,.10), rgba(139,108,255,.08))" }}>
-        <p className="text-xs font-semibold uppercase tracking-[0.2em]" style={{ color: "var(--loss)" }}>🎯 L3 root cause</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.2em]" style={{ color: "var(--loss)" }}>🎯 Root cause</p>
         <p className="font-display mt-3 text-lg leading-relaxed sm:text-xl">{d.root_cause}</p>
       </section>
 

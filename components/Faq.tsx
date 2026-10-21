@@ -8,8 +8,8 @@ const FAQ = [
     a: "Only the weekly seller PnL is required: spend, GMV, RTO%, Spend/GMV%, COGS%, Cancel% and Net Profit% per week. Every extra block (changelog, campaign PnL, gender/age/platform, state, product, fulfilment, Meta weekly trend) unlocks another step. Anything missing is flagged as a data gap, never invented.",
   },
   {
-    q: "What is an \"L3\" root cause?",
-    a: "L1 is the flagged metric (for example, RTO is up 17pp). L2 is a single dimension (for example, more male delivery). L3 crosses two dimensions to name the mechanism: for example, Campaign × Gender, where new 'Women Only' campaigns delivered 64% to men and drove doorstep refusals. L3 is the level where you can act.",
+    q: "How deep does the root cause go?",
+    a: "Three levels deep. Level 1 is the broken metric (for example, RTO is up 17pp). Level 2 is a single factor (for example, more orders going to men). Level 3 crosses two factors to name the actual mechanism: for example, campaign × gender, where new 'Women Only' campaigns delivered 64% of orders to men and caused doorstep refusals. Level 3 is where you can act.",
   },
   {
     q: "How is the benchmark week chosen?",
