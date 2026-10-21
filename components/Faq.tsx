@@ -12,6 +12,10 @@ const FAQ = [
     a: "Three levels deep. Level 1 is the broken metric (for example, RTO is up 17pp). Level 2 is a single factor (for example, more orders going to men). Level 3 crosses two factors to name the actual mechanism: for example, campaign × gender, where new 'Women Only' campaigns delivered 64% of orders to men and caused doorstep refusals. Level 3 is where you can act.",
   },
   {
+    q: "Does the AI make up numbers?",
+    a: "Not the core numbers. A deterministic engine written in code parses your PnL, picks the benchmark, and computes every metric delta, flag and ₹ impact. The AI receives those figures as fixed inputs. A verifier then compares the AI's output against the engine and swaps in the computed value wherever they differ. You can see each check, and the engine trace, above the dashboard.",
+  },
+  {
     q: "How is the benchmark week chosen?",
     a: "With a strict flowchart. The tool looks for profitable (>5%) weeks first, then break-even (3–5%) weeks. It tries spend bands of ±10%, then ±20%, then ±30%, and looks back 6 months, then 12 months, then the full history. It prefers 4 consecutive weeks over 1. Loss weeks never qualify. If nothing fits, the comparison is labelled DIRECTIONAL.",
   },

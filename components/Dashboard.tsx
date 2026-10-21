@@ -76,8 +76,8 @@ export default function Dashboard({ d }: { d: D }) {
       </div>
 
       {/* Root cause */}
-      <section className="card glow-border p-5 sm:p-7" style={{ background: "linear-gradient(120deg, rgba(255,107,74,.10), rgba(139,108,255,.08))" }}>
-        <p className="text-xs font-semibold uppercase tracking-[0.2em]" style={{ color: "var(--loss)" }}>🎯 Root cause</p>
+      <section className="card glow-border p-5 sm:p-7" style={{ background: "linear-gradient(120deg, rgba(34,211,238,.08), rgba(139,92,246,.10), rgba(244,114,182,.06))" }}>
+        <p className="label" style={{ color: "var(--cyan)" }}>◎ cross-cut root cause</p>
         <p className="font-display mt-3 text-lg leading-relaxed sm:text-xl">{d.root_cause}</p>
       </section>
 

@@ -4,9 +4,11 @@ import { NextResponse } from "next/server";
 import { AnalysisSchema } from "@/lib/schema";
 import { getSystemPrompt } from "@/lib/systemPrompt";
 import { rateLimit } from "@/lib/rateLimit";
+import { engineForPrompt, runEngine, type EngineResult } from "@/lib/engine";
+import { verify } from "@/lib/verify";
 
 export const runtime = "nodejs";
-export const maxDuration = 300; // long diagnostics can take a minute or two
+export const maxDuration = 300; // the reasoning step can take a minute or two
 
 const MAX_INPUT_CHARS = 60_000;
 const MODEL = process.env.ANTHROPIC_MODEL || "claude-opus-5-5";
@@ -14,7 +16,7 @@ const MODEL = process.env.ANTHROPIC_MODEL || "claude-opus-5-5";
 export async function POST(req: Request) {
   if (!process.env.ANTHROPIC_API_KEY) {
     return NextResponse.json(
-      { error: "Server is missing ANTHROPIC_API_KEY. Add it in Vercel → Settings → Environment Variables." },
+      { error: "Server is missing ANTHROPIC_API_KEY. Add it in Vercel → Settings → Environment Variables, then redeploy." },
       { status: 500 },
     );
   }
@@ -36,7 +38,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid request body." }, { status: 400 });
   }
   if (data.length < 50) {
-    return NextResponse.json({ error: "Paste more data — at least the weekly PnL." }, { status: 400 });
+    return NextResponse.json({ error: "Add more data. At minimum, include the weekly PnL." }, { status: 400 });
   }
   if (data.length > MAX_INPUT_CHARS) {
     return NextResponse.json(
@@ -45,8 +47,18 @@ export async function POST(req: Request) {
     );
   }
 
-  const client = new Anthropic();
+  // Layer 1: deterministic calculation
+  const requestedWeek = data.match(/Loss week to diagnose:\s*(.+)/i)?.[1]?.trim();
+  let engine: EngineResult;
+  try {
+    engine = runEngine(data, requestedWeek);
+  } catch (e) {
+    console.error("engine failed", e);
+    engine = { ok: false, reason: "The calculation engine hit an unexpected table format.", trace: [] };
+  }
 
+  // Layer 2: reasoning
+  const client = new Anthropic();
   try {
     const response = await client.messages.parse({
       model: MODEL,
@@ -56,7 +68,16 @@ export async function POST(req: Request) {
       messages: [
         {
           role: "user",
-          content: `Run the full 8-step L3 diagnostic on the seller data below.\n\n<seller_data>\n${data}\n</seller_data>`,
+          content: [
+            "Run the full troubleshooting method on the store data below.",
+            "",
+            "<engine_output>",
+            "Computed in code from the PnL. These figures are authoritative: use them exactly for Steps 1–2 and do not recompute them.",
+            engineForPrompt(engine),
+            "</engine_output>",
+            "",
+            `<seller_data>\n${data}\n</seller_data>`,
+          ].join("\n"),
         },
       ],
     });
@@ -71,10 +92,21 @@ export async function POST(req: Request) {
       );
     }
 
-    return NextResponse.json(response.parsed_output);
+    // Layer 3: verification
+    try {
+      const { analysis, checks } = verify(response.parsed_output, engine);
+      return NextResponse.json({ analysis, engine, checks });
+    } catch (e) {
+      console.error("verifier failed", e);
+      return NextResponse.json({
+        analysis: response.parsed_output,
+        engine,
+        checks: [{ label: "Verifier", status: "warn", detail: "The verifier could not run on this output. Numbers are unverified." }],
+      });
+    }
   } catch (err) {
     if (err instanceof Anthropic.RateLimitError) {
-      return NextResponse.json({ error: "AI service is busy. Please retry in a minute." }, { status: 429 });
+      return NextResponse.json({ error: "The AI service is busy. Please retry in a minute." }, { status: 429 });
     }
     if (err instanceof Anthropic.AuthenticationError) {
       return NextResponse.json({ error: "Invalid ANTHROPIC_API_KEY on the server." }, { status: 500 });

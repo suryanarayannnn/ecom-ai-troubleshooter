@@ -3,63 +3,73 @@
 import { useEffect, useState } from "react";
 
 export const STEP_LIST = [
-  { t: "Benchmark selection", d: "Searching ±10/20/30% spend bands for a qualifying profitable week" },
-  { t: "Problem metric", d: "Comparing RTO, S/GMV, COGS and Cancel against thresholds; sizing ₹ impact" },
+  { t: "Benchmark selection", d: "Searching ±10/20/30% spend bands across 6-month, 12-month and full-history windows" },
+  { t: "Problem metric", d: "Comparing RTO, S/GMV, COGS and Cancel against thresholds and sizing ₹ impact" },
   { t: "Changelog correlation", d: "Matching price, cost, visibility and OOS changes to the flagged metric" },
-  { t: "Fulfilment checks", d: "O2S, S2A, FAD, NDR, and silent-RTO signals" },
-  { t: "Audience (GASP)", d: "Gender, age and platform shifts and their mechanical chunks" },
-  { t: "Product mix", d: "Concentration, anchor SKUs, and the demand-saturation fingerprint" },
-  { t: "State / geo", d: "Geo expansion vs within-state spikes in previously clean states" },
-  { t: "Campaign cross-cut", d: "Workhorse defunding, targeting compliance, and Campaign × Dimension" },
+  { t: "Fulfilment checks", d: "O2S, S2A, FAD, NDR and silent-RTO signals" },
+  { t: "Audience", d: "Gender, age and platform shifts, with mechanical chunks" },
+  { t: "Product mix", d: "Concentration, anchor SKUs and the demand-saturation fingerprint" },
+  { t: "State / geo", d: "Geo expansion vs spikes in previously clean states" },
+  { t: "Campaign cross-cut", d: "Workhorse defunding, targeting compliance, and campaign × dimension" },
 ];
 
-// The API call is a single request, so this is a paced visual of the method,
-// not live telemetry.
-export default function Progress() {
-  const [step, setStep] = useState(0);
-  const [secs, setSecs] = useState(0);
+// The request is a single call, so this console is a paced visual of the
+// pipeline, not live telemetry.
+const SCRIPT = [
+  { at: 0, tag: "intake", text: "sources mapped · gaps declared" },
+  { at: 2, tag: "engine", text: "parsing weekly PnL" },
+  { at: 4, tag: "engine", text: "benchmark flowchart · window → band → tier → run" },
+  { at: 6, tag: "engine", text: "deltas · thresholds · ₹ impact computed" },
+  ...STEP_LIST.slice(2).map((s, i) => ({ at: 10 + i * 14, tag: "reason", text: `step ${i + 3} · ${s.t.toLowerCase()}` })),
+  { at: 96, tag: "reason", text: "writing cross-cut root cause + action plan" },
+  { at: 120, tag: "verify", text: "waiting on reasoning layer…" },
+];
+const TAG_COLOR: Record<string, string> = { intake: "#8b5cf6", engine: "#22d3ee", reason: "#f472b6", verify: "#a3e635" };
 
+export default function Progress() {
+  const [secs, setSecs] = useState(0);
   useEffect(() => {
     const s = setInterval(() => setSecs((x) => x + 1), 1000);
-    const p = setInterval(() => setStep((x) => Math.min(x + 1, STEP_LIST.length - 1)), 11000);
-    return () => { clearInterval(s); clearInterval(p); };
+    return () => clearInterval(s);
   }, []);
 
+  const lines = SCRIPT.filter((l) => l.at <= secs);
+  const stage = lines[lines.length - 1]?.tag ?? "intake";
+  const stages = ["intake", "engine", "reason", "verify"];
+  const pct = Math.min(94, 6 + secs * 0.75);
+
   return (
-    <div className="card glow-border animate-fade-up mt-8 p-5 sm:p-7">
-      <div className="flex items-center justify-between gap-4">
+    <div className="card hud glow-border animate-fade-up mt-8 overflow-hidden" style={{ background: "rgba(5,7,14,.85)" }}>
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b px-5 py-3" style={{ borderColor: "var(--line)" }}>
         <div className="flex items-center gap-3">
-          <span className="spin h-5 w-5 rounded-full border-2" style={{ borderColor: "var(--line-strong)", borderTopColor: "var(--loss)" }} />
-          <p className="font-display text-lg font-semibold">LossLens is troubleshooting your store…</p>
+          <span className="spin h-4 w-4 rounded-full border-2" style={{ borderColor: "var(--line-strong)", borderTopColor: "var(--cyan)" }} />
+          <span className="label" style={{ color: "#a5f3fc" }}>agent running</span>
         </div>
-        <span className="font-mono text-xs muted">{Math.floor(secs / 60)}:{String(secs % 60).padStart(2, "0")}</span>
+        <div className="flex gap-1.5">
+          {stages.map((s) => (
+            <span key={s} className="label rounded-md px-2 py-1" style={{
+              background: s === stage ? `${TAG_COLOR[s]}22` : "transparent",
+              color: s === stage ? TAG_COLOR[s] : stages.indexOf(s) < stages.indexOf(stage) ? "#6b7590" : "#3a4256",
+              border: `1px solid ${s === stage ? `${TAG_COLOR[s]}66` : "var(--line)"}`,
+            }}>{s}</span>
+          ))}
+        </div>
+        <span className="mono text-xs muted">{Math.floor(secs / 60)}:{String(secs % 60).padStart(2, "0")}</span>
       </div>
-      <div className="mt-4 h-1.5 overflow-hidden rounded-full" style={{ background: "rgba(255,255,255,.06)" }}>
-        <div
-          className="scan-bar h-full rounded-full transition-all duration-1000"
-          style={{ width: `${((step + 1) / STEP_LIST.length) * 92}%`, background: "linear-gradient(90deg,#ff6b4a,#8b6cff,#3dd6c6)" }}
-        />
+      <div className="h-1" style={{ background: "rgba(255,255,255,.04)" }}>
+        <div className="scan-bar h-full transition-all duration-1000" style={{ width: `${pct}%`, background: "var(--grad)" }} />
       </div>
-      <ol className="mt-5 grid gap-2 sm:grid-cols-2">
-        {STEP_LIST.map((s, i) => {
-          const state = i < step ? "done" : i === step ? "active" : "todo";
-          return (
-            <li key={s.t} className="flex items-start gap-3 rounded-xl p-2.5 transition-colors" style={{ background: state === "active" ? "rgba(255,255,255,.05)" : "transparent", opacity: state === "todo" ? 0.4 : 1 }}>
-              <span
-                className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px] font-bold ${state === "active" ? "pulse-dot" : ""}`}
-                style={{ background: state === "done" ? "var(--good)" : state === "active" ? "var(--loss)" : "rgba(255,255,255,.08)", color: state === "todo" ? "var(--muted)" : "#0a0a0a" }}
-              >
-                {state === "done" ? "✓" : i + 1}
-              </span>
-              <div>
-                <p className="text-sm font-medium">{s.t}</p>
-                {state === "active" && <p className="mt-0.5 text-xs muted">{s.d}</p>}
-              </div>
-            </li>
-          );
-        })}
-      </ol>
-      <p className="mt-4 text-xs muted">Typically 1–3 minutes. Every number in the report is traced back to your data.</p>
+      <div className="mono max-h-72 space-y-1.5 overflow-y-auto p-5 text-[12px] sm:text-[13px]">
+        {lines.map((l, i) => (
+          <div key={i} className="animate-fade-up flex gap-3">
+            <span className="w-14 shrink-0 text-right" style={{ color: TAG_COLOR[l.tag] }}>{l.tag}</span>
+            <span className={i === lines.length - 1 ? "caret" : ""} style={{ color: i === lines.length - 1 ? "#eef2ff" : "#7d879e" }}>{l.text}</span>
+          </div>
+        ))}
+      </div>
+      <p className="border-t px-5 py-3 text-xs muted" style={{ borderColor: "var(--line)" }}>
+        Usually 1–3 minutes. Core numbers are computed in code and verified before you see them.
+      </p>
     </div>
   );
 }

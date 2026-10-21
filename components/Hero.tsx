@@ -3,29 +3,70 @@
 import { useEffect, useState } from "react";
 import { SITE } from "@/lib/site";
 
-const WORDS = ["RTO spikes", "S/GMV blowouts", "COGS creep", "cancel surges", "silent RTO"];
+const WORDS = ["RTO spikes", "ad spend leaks", "COGS creep", "cancel surges", "silent RTO", "dead campaigns"];
 
-const STATS = [
-  { value: 8, suffix: "", label: "automated checks" },
-  { value: 12, suffix: "+", label: "live case studies" },
-  { value: 4, suffix: "", label: "problem lenses" },
-  { value: 9, suffix: "", label: "failure modes guarded" },
+// Replay of the engine on the "Women Only" sample case.
+const LOG: { tag: string; text: string; tone?: string }[] = [
+  { tag: "$", text: "losslens run --store demo-ethnic-co", tone: "#eef2ff" },
+  { tag: "intake", text: "10 PnL weeks · 8 data sources · 0 required missing" },
+  { tag: "engine", text: "benchmark W33–W36 · 6-mo · ±10% band · profitable · n=4" },
+  { tag: "engine", text: "RTO% 30.83 → 48.2 (+17.37pp) FLAGGED · ₹77,957", tone: "#ff5c7a" },
+  { tag: "engine", text: "S/GMV +2.4pp · downstream of RTO", tone: "#fbbf24" },
+  { tag: "reason", text: "fulfilment O2S 1.3d · S2A 3.9d · FAD 59% → ruled out" },
+  { tag: "reason", text: "audience male spend share 6% → 39%", tone: "#ff5c7a" },
+  { tag: "reason", text: "campaign 'Women_Only' delivered 64% to men" },
+  { tag: "verify", text: "numbers traced to PnL ✓ · benchmark valid ✓", tone: "#a3e635" },
+  { tag: "result", text: "ROOT CAUSE → Campaign × Gender", tone: "#22d3ee" },
 ];
 
-function Counter({ to, suffix }: { to: number; suffix: string }) {
-  const [n, setN] = useState(0);
+const TAG_COLOR: Record<string, string> = {
+  $: "#22d3ee", intake: "#8b5cf6", engine: "#22d3ee", reason: "#f472b6", verify: "#a3e635", result: "#22d3ee",
+};
+
+function Terminal() {
+  const [shown, setShown] = useState(0);
+  const [typed, setTyped] = useState("");
+
   useEffect(() => {
-    let raf = 0;
-    const start = performance.now();
-    const tick = (t: number) => {
-      const p = Math.min(1, (t - start) / 1400);
-      setN(Math.round(to * (1 - Math.pow(1 - p, 3))));
-      if (p < 1) raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [to]);
-  return <>{n}{suffix}</>;
+    if (shown >= LOG.length) {
+      const t = setTimeout(() => { setShown(0); setTyped(""); }, 3800);
+      return () => clearTimeout(t);
+    }
+    const full = LOG[shown].text;
+    if (typed.length < full.length) {
+      const t = setTimeout(() => setTyped(full.slice(0, typed.length + 2)), 14);
+      return () => clearTimeout(t);
+    }
+    const t = setTimeout(() => { setShown((s) => s + 1); setTyped(""); }, 380);
+    return () => clearTimeout(t);
+  }, [shown, typed]);
+
+  return (
+    <div className="card hud glow-border relative overflow-hidden text-left" style={{ background: "rgba(5,7,14,.82)" }}>
+      <div className="flex items-center justify-between border-b px-4 py-2.5" style={{ borderColor: "var(--line)" }}>
+        <div className="flex gap-1.5">
+          <span className="h-2.5 w-2.5 rounded-full" style={{ background: "#ff5c7a" }} />
+          <span className="h-2.5 w-2.5 rounded-full" style={{ background: "#fbbf24" }} />
+          <span className="h-2.5 w-2.5 rounded-full" style={{ background: "#a3e635" }} />
+        </div>
+        <span className="label muted">agent://losslens · demo replay</span>
+      </div>
+      <div className="mono min-h-[300px] space-y-1.5 p-4 text-[12px] leading-relaxed sm:text-[13px]">
+        {LOG.slice(0, shown).map((l, i) => (
+          <div key={i} className="flex gap-3">
+            <span className="w-14 shrink-0 text-right" style={{ color: TAG_COLOR[l.tag] }}>{l.tag}</span>
+            <span style={{ color: l.tone ?? "#b6bfd4" }}>{l.text}</span>
+          </div>
+        ))}
+        {shown < LOG.length && (
+          <div className="flex gap-3">
+            <span className="w-14 shrink-0 text-right" style={{ color: TAG_COLOR[LOG[shown].tag] }}>{LOG[shown].tag}</span>
+            <span className="caret" style={{ color: LOG[shown].tone ?? "#b6bfd4" }}>{typed}</span>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 }
 
 export default function Hero() {
@@ -36,55 +77,56 @@ export default function Hero() {
   }, []);
 
   return (
-    <section className="relative overflow-hidden pt-28 pb-16 sm:pt-36 sm:pb-24">
-      {/* Ornaments */}
+    <section className="relative overflow-hidden pt-28 pb-20 sm:pt-36 sm:pb-28">
       <div className="grid-bg absolute inset-0 -z-10" />
-      <div className="orb -z-10" style={{ width: 460, height: 460, left: "-8%", top: "-10%", background: "#ff6b4a" }} />
-      <div className="orb -z-10" style={{ width: 420, height: 420, right: "-6%", top: "10%", background: "#8b6cff", animationDelay: "-6s" }} />
-      <div className="orb -z-10" style={{ width: 300, height: 300, left: "35%", bottom: "-20%", background: "#3dd6c6", opacity: 0.3, animationDelay: "-12s" }} />
+      <div className="floor -z-10" />
+      <div className="orb -z-10" style={{ width: 480, height: 480, left: "-10%", top: "-12%", background: "#22d3ee" }} />
+      <div className="orb -z-10" style={{ width: 440, height: 440, right: "-8%", top: "5%", background: "#8b5cf6", animationDelay: "-6s" }} />
+      <div className="orb -z-10" style={{ width: 300, height: 300, left: "40%", top: "40%", background: "#f472b6", opacity: 0.22, animationDelay: "-12s" }} />
 
-      <div className="mx-auto max-w-6xl px-4 text-center">
-        <div className="animate-fade-up inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs" style={{ borderColor: "var(--line-strong)", background: "rgba(255,255,255,.04)" }}>
-          <span className="pulse-dot h-2 w-2 rounded-full" style={{ background: "var(--loss)" }} />
-          Automated profit troubleshooter for e-commerce & Shopify stores
+      <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 lg:grid-cols-[1.05fr_1fr]">
+        <div className="text-center lg:text-left">
+          <div className="animate-fade-up inline-flex items-center gap-2 rounded-full border px-3 py-1" style={{ borderColor: "rgba(34,211,238,.35)", background: "rgba(34,211,238,.06)" }}>
+            <span className="pulse-dot h-2 w-2 rounded-full" style={{ background: "var(--cyan)" }} />
+            <span className="label" style={{ color: "#a5f3fc" }}>Agent online · e-commerce & Shopify</span>
+          </div>
+
+          <h1 className="font-display animate-fade-up mt-6 text-5xl font-bold leading-[1.0] sm:text-6xl lg:text-7xl" style={{ animationDelay: "80ms" }}>
+            Profit forensics,
+            <br />
+            <span className="gradient-text">on autopilot.</span>
+          </h1>
+
+          <p className="animate-fade-up mt-5 text-lg" style={{ animationDelay: "140ms" }}>
+            <span className="muted">Now hunting: </span>
+            <span className="relative inline-block min-w-[9ch] text-left">
+              <span key={i} className="animate-word mono font-semibold" style={{ color: "var(--cyan)" }}>{WORDS[i]}</span>
+            </span>
+          </p>
+
+          <p className="animate-fade-up mx-auto mt-5 max-w-xl text-base muted sm:text-lg lg:mx-0" style={{ animationDelay: "200ms" }}>
+            <strong className="text-white">LossLens</strong> is an AI agent that finds why your store lost money.
+            Drop in your exports: a <span className="text-white">deterministic engine</span> computes the numbers,
+            an <span className="text-white">AI analyst</span> reasons through 8 steps, and a{" "}
+            <span className="text-white">verifier</span> catches anything it can&apos;t trace. Out comes the exact root cause and a ₹ fix plan.
+          </p>
+
+          <div className="animate-fade-up mt-9 flex flex-wrap justify-center gap-3 lg:justify-start" style={{ animationDelay: "260ms" }}>
+            <a href="#try" className="btn-primary rounded-xl px-6 py-3 text-sm">Launch the agent →</a>
+            <a href="#cases" className="btn-ghost rounded-xl px-6 py-3 text-sm font-semibold">Replay a sample case</a>
+          </div>
+
+          <p className="animate-fade-up mt-8 text-xs muted" style={{ animationDelay: "320ms" }}>
+            Designed & engineered by{" "}
+            <a href={SITE.linkedin} target="_blank" rel="noreferrer" className="text-white underline decoration-white/30 underline-offset-4 hover:decoration-white">
+              {SITE.authorName}
+            </a>
+          </p>
         </div>
 
-        <h1 className="font-display animate-fade-up mt-6 text-4xl font-bold leading-[1.05] sm:text-6xl md:text-7xl" style={{ animationDelay: "80ms" }}>
-          Your week lost money.
-          <br />
-          <span className="muted">Find the </span>
-          <span className="relative inline-block min-w-[6ch] align-bottom">
-            <span key={i} className="animate-word gradient-text">{WORDS[i]}</span>
-          </span>
-          <span className="muted">.</span>
-        </h1>
-
-        <p className="animate-fade-up mx-auto mt-6 max-w-2xl text-base sm:text-lg muted" style={{ animationDelay: "160ms" }}>
-          <strong className="text-white">LossLens</strong> troubleshoots your store like a senior growth analyst would.
-          Answer a few questions, paste your PnL, ad campaign, audience, state and fulfilment data, and get the
-          exact root cause (for example, <em>which campaign × which audience</em>) with a ₹-quantified fix plan in minutes.
-        </p>
-
-        <div className="animate-fade-up mt-9 flex flex-wrap justify-center gap-3" style={{ animationDelay: "240ms" }}>
-          <a href="#try" className="btn-primary rounded-xl px-6 py-3 text-sm font-semibold">Run a diagnosis →</a>
-          <a href="#cases" className="btn-ghost rounded-xl px-6 py-3 text-sm font-semibold">Try a sample case</a>
+        <div className="animate-fade-up" style={{ animationDelay: "200ms" }}>
+          <Terminal />
         </div>
-
-        <div className="animate-fade-up mx-auto mt-14 grid max-w-3xl grid-cols-2 gap-3 sm:grid-cols-4" style={{ animationDelay: "320ms" }}>
-          {STATS.map((s) => (
-            <div key={s.label} className="card px-4 py-4">
-              <div className="font-display text-3xl font-bold"><Counter to={s.value} suffix={s.suffix} /></div>
-              <div className="mt-1 text-xs muted">{s.label}</div>
-            </div>
-          ))}
-        </div>
-
-        <p className="animate-fade-up mt-8 text-xs muted" style={{ animationDelay: "400ms" }}>
-          Designed & built by{" "}
-          <a href={SITE.linkedin} target="_blank" rel="noreferrer" className="text-white underline decoration-white/30 underline-offset-4 hover:decoration-white">
-            {SITE.authorName}
-          </a>
-        </p>
       </div>
     </section>
   );
