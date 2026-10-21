@@ -25,7 +25,7 @@ const FAQ = [
   },
   {
     q: "Is my data stored?",
-    a: "This app has no database. Your paste is sent once to the Claude API to produce the analysis and then discarded by the app. Don't paste data you're not allowed to share.",
+    a: "This app has no database. Your paste is sent once to the AI model (Google Gemini) to produce the analysis and then discarded by the app. Don't paste data you're not allowed to share.",
   },
   {
     q: "Can it be wrong?",

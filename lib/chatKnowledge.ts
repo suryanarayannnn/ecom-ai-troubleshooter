@@ -35,7 +35,7 @@ No data? Load a [sample case](#cases).
 Excel files must be saved as CSV first. The input limit is about 60,000 characters.
 
 ## Architecture
-Intake → Engine (code, deterministic) → Reasoning (Claude, 8 steps) → Verifier (guardrails) → Report.
+Intake → Engine (code, deterministic) → Reasoning (AI model, 8 steps) → Verifier (guardrails) → Report.
 The engine parses the PnL, picks the benchmark and computes deltas, flags and ₹ impact in code, so the AI never generates these core numbers. The verifier replaces any core number in the AI's output that doesn't match the engine.
 
 ## The 8 steps
@@ -63,7 +63,7 @@ RTO = return to origin (shipped but refused or undelivered). S/GMV = marketing s
 The app has no database. Data is sent once to the AI to produce the analysis. Don't paste data you aren't allowed to share.
 
 ## About the builder
-S Surya Narayan designed the troubleshooting method from 12+ real store loss cases and built the app (Next.js, TypeScript, Claude API, Vercel). LinkedIn: https://www.linkedin.com/in/ssuryanarayan`;
+S Surya Narayan designed the troubleshooting method from 12+ real store loss cases and built the app (Next.js, TypeScript, Gemini AI, Vercel). LinkedIn: https://www.linkedin.com/in/ssuryanarayan`;
 
 // Extra knowledge for features behind switches, so the assistant never mentions a disabled feature.
 export function chatSystem(): string {

@@ -16,7 +16,7 @@ When an online store has a losing week, LossLens finds out why. Answer four quic
 ```
 Browser (Next.js page)  ──POST /api/analyze──▶  Serverless function (Vercel)
    paste data / sample                             ├─ system prompt = prompts/*.md
-   charts (Recharts)  ◀── JSON ─────────────────── ├─ Claude API (structured output, zod schema)
+   charts (Recharts)  ◀── JSON ─────────────────── ├─ Gemini (free tier, JSON validated by zod)
    markdown report                                 └─ rate limit + input caps
 ```
 
@@ -24,16 +24,15 @@ Browser (Next.js page)  ──POST /api/analyze──▶  Serverless function (V
 - Missing data is never invented. Empty breakdowns show as "No data" and are listed under *data gaps*.
 - The API key lives only on the server (Vercel environment variable).
 
-**Stack:** Next.js 15 · TypeScript · Tailwind CSS v4 · Recharts · Anthropic SDK · Zod
+**Stack:** Next.js 15 · TypeScript · Tailwind CSS v4 · Recharts · Google Gemini (free tier) · Zod
 
 ## Deploy (no local install needed)
 
-1. **Get an Anthropic API key** at <https://console.anthropic.com>. Under *Limits*, set a monthly spend cap, because the demo is public.
+1. **Get a free Gemini API key** at <https://aistudio.google.com/apikey>. No billing needed; the site only uses free-tier models.
 2. **Put the code on GitHub**: create a new repository → *Add file → Upload files* → drag in everything in this folder → *Commit*.
 3. **Deploy on Vercel**: sign in at <https://vercel.com> with GitHub → *Add New → Project* → import the repository.
 4. Before you click *Deploy*, open **Environment Variables** and add:
-   - `ANTHROPIC_API_KEY` = your key
-   - *(optional)* `ANTHROPIC_MODEL` = `claude-sonnet-5-5` for lower cost per run (the default is `claude-opus-5-5`)
+   - `GEMINI_API_KEY` = your free key
 5. Click **Deploy**. You get a public `https://<name>.vercel.app` link.
 
 Every later commit to GitHub, including edits made in GitHub's web editor, redeploys automatically.
@@ -56,10 +55,9 @@ Studio code is self-contained, so you can also remove it from the repo entirely 
 
 | Variable | Used by |
 |---|---|
-| `ANTHROPIC_API_KEY` | Troubleshoot agent and Studio Pro |
-| `GEMINI_API_KEY` | Ask Lens chat and Studio Standard (free tier, aistudio.google.com/apikey) |
+| `GEMINI_API_KEY` | Everything: troubleshooter, Section Studio, Ask Lens (free tier, aistudio.google.com/apikey) |
 | `WALLET_SECRET` | Optional: a long random string used to sign token balances |
-| `THEME_FREE_MODEL` / `THEME_PRO_MODEL` / `CHAT_MODEL` / `ANTHROPIC_MODEL` | Optional model overrides |
+| `ANALYZE_MODEL` / `THEME_FREE_MODEL` / `THEME_PRO_MODEL` / `CHAT_MODEL` | Optional model overrides (default: free Gemini models) |
 
 ## Customise
 

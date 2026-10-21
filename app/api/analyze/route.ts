@@ -1,5 +1,3 @@
-import Anthropic from "@anthropic-ai/sdk";
-import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
 import { NextResponse, type NextRequest } from "next/server";
 import { AnalysisSchema } from "@/lib/schema";
 import { FEATURES } from "@/lib/features";
@@ -9,12 +7,12 @@ import { getSystemPrompt } from "@/lib/systemPrompt";
 import { rateLimit } from "@/lib/rateLimit";
 import { engineForPrompt, runEngine, type EngineResult } from "@/lib/engine";
 import { verify } from "@/lib/verify";
+import { AI, generateJSON, LLMError } from "@/lib/llm";
 
 export const runtime = "nodejs";
 export const maxDuration = 300; // the reasoning step can take a minute or two
 
 const MAX_INPUT_CHARS = 60_000;
-const MODEL = process.env.ANTHROPIC_MODEL || "claude-opus-5-5";
 
 // Charges the run when the token system is on; otherwise passes the response through.
 function settle(res: NextResponse, w: Wallet | null) {
@@ -24,9 +22,9 @@ function settle(res: NextResponse, w: Wallet | null) {
 }
 
 export async function POST(req: NextRequest) {
-  if (!process.env.ANTHROPIC_API_KEY) {
+  if (!AI.ready) {
     return NextResponse.json(
-      { error: "Server is missing ANTHROPIC_API_KEY. Add it in Vercel → Settings → Environment Variables, then redeploy." },
+      { error: AI.missingKeyMessage },
       { status: 500 },
     );
   }
@@ -76,64 +74,40 @@ export async function POST(req: NextRequest) {
     engine = { ok: false, reason: "The calculation engine hit an unexpected table format.", trace: [] };
   }
 
-  // Layer 2: reasoning
-  const client = new Anthropic();
+  // Layer 2: reasoning (free Gemini model)
   try {
-    const response = await client.messages.parse({
-      model: MODEL,
-      max_tokens: 16000,
+    const output = await generateJSON({
+      model: AI.models.analyze,
+      maxTokens: 32000,
       system: getSystemPrompt(),
-      output_config: { effort: "medium", format: zodOutputFormat(AnalysisSchema) },
-      messages: [
-        {
-          role: "user",
-          content: [
-            "Run the full troubleshooting method on the store data below.",
-            "",
-            "<engine_output>",
-            "Computed in code from the PnL. These figures are authoritative: use them exactly for Steps 1–2 and do not recompute them.",
-            engineForPrompt(engine),
-            "</engine_output>",
-            "",
-            `<seller_data>\n${data}\n</seller_data>`,
-          ].join("\n"),
-        },
-      ],
+      schema: AnalysisSchema,
+      user: [
+        "Run the full troubleshooting method on the store data below.",
+        "",
+        "<engine_output>",
+        "Computed in code from the PnL. These figures are authoritative: use them exactly for Steps 1–2 and do not recompute them.",
+        engineForPrompt(engine),
+        "</engine_output>",
+        "",
+        `<seller_data>\n${data}\n</seller_data>`,
+      ].join("\n"),
     });
-
-    if (response.stop_reason === "refusal") {
-      return NextResponse.json({ error: "The model declined this request." }, { status: 422 });
-    }
-    if (response.stop_reason === "max_tokens" || !response.parsed_output) {
-      return NextResponse.json(
-        { error: "The analysis was too long to finish. Try pasting less data." },
-        { status: 502 },
-      );
-    }
 
     // Layer 3: verification
     try {
-      const { analysis, checks } = verify(response.parsed_output, engine);
+      const { analysis, checks } = verify(output, engine);
       return settle(NextResponse.json({ analysis, engine, checks, wallet: after() }), wallet);
     } catch (e) {
       console.error("verifier failed", e);
       return settle(NextResponse.json({
-        analysis: response.parsed_output,
+        analysis: output,
         engine,
         checks: [{ label: "Verifier", status: "warn", detail: "The verifier could not run on this output. Numbers are unverified." }],
         wallet: after(),
       }), wallet);
     }
   } catch (err) {
-    if (err instanceof Anthropic.RateLimitError) {
-      return NextResponse.json({ error: "The AI service is busy. Please retry in a minute." }, { status: 429 });
-    }
-    if (err instanceof Anthropic.AuthenticationError) {
-      return NextResponse.json({ error: "Invalid ANTHROPIC_API_KEY on the server." }, { status: 500 });
-    }
-    if (err instanceof Anthropic.APIError) {
-      return NextResponse.json({ error: `AI service error (${err.status}).` }, { status: 502 });
-    }
+    if (err instanceof LLMError) return NextResponse.json({ error: err.message }, { status: err.status });
     console.error(err);
     return NextResponse.json({ error: "Unexpected server error." }, { status: 500 });
   }

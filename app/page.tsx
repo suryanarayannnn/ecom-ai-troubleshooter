@@ -500,7 +500,7 @@ export default function Home() {
               Loss<span className="gradient-text">Lens</span> <span className="muted">· built by</span>{" "}
               <a href={SITE.linkedin} target="_blank" rel="noreferrer" className="hover:underline">{SITE.authorName}</a>
             </p>
-            <p className="mt-1 text-xs muted">The method is distilled from 12+ real store loss cases. Sample stores are fictional. Powered by Claude.</p>
+            <p className="mt-1 text-xs muted">The method is distilled from 12+ real store loss cases. Sample stores are fictional. Runs on free Gemini models.</p>
           </div>
           <div className="flex gap-3 text-sm">
             <a href={SITE.linkedin} target="_blank" rel="noreferrer" className="btn-ghost rounded-lg px-4 py-2">LinkedIn</a>

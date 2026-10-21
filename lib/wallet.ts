@@ -12,7 +12,7 @@ const today = () => new Date().toISOString().slice(0, 10);
 
 function secret() {
   return process.env.WALLET_SECRET
-    || createHash("sha256").update(`losslens-wallet:${process.env.ANTHROPIC_API_KEY ?? ""}:${process.env.GEMINI_API_KEY ?? ""}`).digest("hex");
+    || createHash("sha256").update(`losslens-wallet:${process.env.GEMINI_API_KEY ?? process.env.CHAT_API_KEY ?? ""}`).digest("hex");
 }
 const sign = (payload: string) => createHmac("sha256", secret()).update(payload).digest("base64url");
 

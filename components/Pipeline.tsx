@@ -3,7 +3,7 @@ import Reveal from "./Reveal";
 const STAGES = [
   { k: "01", name: "Intake", tag: "files → sources", d: "Drop CSV exports or paste tables. Each source is recognised and mapped to the steps it unlocks. Gaps are declared up front.", color: "var(--violet)" },
   { k: "02", name: "Engine", tag: "code · deterministic", d: "Parses the PnL, runs the benchmark flowchart, and computes deltas, flags and ₹ impact. Same input, same numbers, every run.", color: "var(--cyan)" },
-  { k: "03", name: "Reasoning", tag: "Claude · 8 steps", d: "Works through changelog, fulfilment, audience, product, geo and campaigns, ruling each in or out with evidence.", color: "var(--pink)" },
+  { k: "03", name: "Reasoning", tag: "AI · 8 steps", d: "Works through changelog, fulfilment, audience, product, geo and campaigns, ruling each in or out with evidence.", color: "var(--pink)" },
   { k: "04", name: "Verifier", tag: "guardrails", d: "Re-checks every core figure against the engine, replaces anything untraceable, and flags weak conclusions.", color: "var(--good)" },
   { k: "05", name: "Report", tag: "dashboard + JSON", d: "A cross-cut root cause, a prioritised action plan with owners, the full case study, and a machine-readable sidecar.", color: "var(--warn)" },
 ];
