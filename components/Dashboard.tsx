@@ -19,7 +19,7 @@ const STATUS = {
 } as const;
 
 const tooltipStyle = {
-  contentStyle: { background: "var(--card)", border: "1px solid var(--line)", borderRadius: 8, fontSize: 12 },
+  contentStyle: { background: "var(--card-solid)", border: "1px solid var(--line)", borderRadius: 8, fontSize: 12 },
   labelStyle: { color: "var(--ink)", fontWeight: 600 },
 };
 const axis = { stroke: "var(--muted)", fontSize: 11, tickLine: false };
@@ -61,7 +61,7 @@ export default function Dashboard({ d }: { d: D }) {
       {/* Header */}
       <section className="card p-4 sm:p-6">
         <p className="text-xs muted uppercase tracking-wide">Case study</p>
-        <h2 className="mt-1 text-xl sm:text-2xl font-bold">{d.header.seller}</h2>
+        <h2 className="font-display mt-1 text-2xl sm:text-3xl font-bold">{d.header.seller}</h2>
         <p className="mt-1 text-sm muted">
           Loss week: <strong style={{ color: "var(--ink)" }}>{d.header.loss_week}</strong> · Benchmark:{" "}
           <strong style={{ color: "var(--ink)" }}>{d.header.benchmark}</strong> · {d.header.benchmark_quality}
@@ -76,9 +76,9 @@ export default function Dashboard({ d }: { d: D }) {
       </div>
 
       {/* Root cause */}
-      <section className="card p-4 sm:p-6" style={{ borderColor: "var(--loss)" }}>
-        <p className="text-xs font-semibold uppercase tracking-wide" style={{ color: "var(--loss)" }}>🎯 L3 root cause</p>
-        <p className="mt-2 text-base leading-relaxed">{d.root_cause}</p>
+      <section className="card glow-border p-5 sm:p-7" style={{ background: "linear-gradient(120deg, rgba(255,107,74,.10), rgba(139,108,255,.08))" }}>
+        <p className="text-xs font-semibold uppercase tracking-[0.2em]" style={{ color: "var(--loss)" }}>🎯 L3 root cause</p>
+        <p className="font-display mt-3 text-lg leading-relaxed sm:text-xl">{d.root_cause}</p>
       </section>
 
       {/* Step 2 metrics */}

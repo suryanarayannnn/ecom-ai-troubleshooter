@@ -1,7 +1,7 @@
-// Edit these to personalise the portfolio header.
+// Edit these to personalise the site credits.
 export const SITE = {
-  authorName: "Your Name",
-  authorRole: "Growth & Analytics",
-  linkedin: "https://www.linkedin.com/in/your-profile",
+  authorName: "S Surya Narayan",
+  linkedin: "https://www.linkedin.com/in/ssuryanarayan",
   github: "https://github.com/suryanarayannnn",
+  repo: "https://github.com/suryanarayannnn/ecom-ai-troubleshooter",
 };
