@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import ChatWidget from "@/components/ChatWidget";
 import type { Analysis } from "@/lib/schema";
 import type { EngineResult } from "@/lib/engine";
 import type { Check } from "@/lib/verify";
@@ -120,6 +121,16 @@ export default function Home() {
     setError(null);
     document.getElementById("try")?.scrollIntoView({ behavior: "smooth" });
   }
+
+  // The chat assistant can load a sample case by id.
+  useEffect(() => {
+    const onLoad = (e: Event) => {
+      const c = CASES.find((x) => x.id === (e as CustomEvent<string>).detail);
+      if (c) loadCase(c);
+    };
+    window.addEventListener("losslens:load-case", onLoad);
+    return () => window.removeEventListener("losslens:load-case", onLoad);
+  });
 
   function reset() {
     setActiveCase(null);
@@ -471,6 +482,8 @@ export default function Home() {
           </div>
         </div>
       </footer>
+
+      <ChatWidget />
     </main>
   );
 }
