@@ -504,7 +504,6 @@ export default function Home() {
           </div>
           <div className="flex gap-3 text-sm">
             <a href={SITE.linkedin} target="_blank" rel="noreferrer" className="btn-ghost rounded-lg px-4 py-2">LinkedIn</a>
-            <a href={SITE.repo} target="_blank" rel="noreferrer" className="btn-ghost rounded-lg px-4 py-2">Source</a>
           </div>
         </div>
       </footer>
