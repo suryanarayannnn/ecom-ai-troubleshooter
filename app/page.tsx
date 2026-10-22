@@ -20,6 +20,7 @@ import EnginePanel from "@/components/EnginePanel";
 import Faq from "@/components/Faq";
 import Dashboard from "@/components/Dashboard";
 import Report from "@/components/Report";
+import FullReport from "@/components/FullReport";
 
 type Result = { analysis: Analysis; engine: EngineResult; checks: Check[] };
 type Upload = { name: string; size: number; kind: string; text: string };
@@ -87,6 +88,7 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<Result | null>(null);
   const [noTokens, setNoTokens] = useState(false);
+  const [lastPayload, setLastPayload] = useState("");
   const fileInput = useRef<HTMLInputElement>(null);
 
   const combined = useMemo(
@@ -153,10 +155,12 @@ export default function Home() {
     setNoTokens(false);
     setResult(null);
     try {
+      const payload = buildPayload(answers, combined);
+      setLastPayload(payload);
       const res = await fetch("/api/analyze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ data: buildPayload(answers, combined) }),
+        body: JSON.stringify({ data: payload }),
       });
       const json = await res.json().catch(() => null);
       emitWallet(json?.wallet as PublicWallet | undefined);
@@ -433,6 +437,7 @@ export default function Home() {
               <EnginePanel engine={result.engine} checks={result.checks} analysis={result.analysis} />
               <Dashboard d={result.analysis.dashboard} />
               <Report markdown={result.analysis.report_markdown} />
+              <FullReport data={lastPayload} analysis={result.analysis} />
             </div>
           )}
         </div>

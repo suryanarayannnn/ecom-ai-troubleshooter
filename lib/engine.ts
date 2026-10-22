@@ -22,6 +22,7 @@ export type MetricRow = {
   flagged: boolean;
   impact_inr: number | null;
   pct_of_loss: number | null;
+  inr_per_pp: number;
 };
 
 export type Benchmark = {
@@ -44,6 +45,7 @@ export type EngineResult =
       primary: "RTO" | "S/GMV" | "COGS" | "Cancel" | "Unclear";
       downstream_sgmv: boolean;
       cogs_note: string | null;
+      history: { recent: Week[]; last_profitable: string | null; loss_streak: number };
       trace: string[];
     }
   | { ok: false; reason: string; trace: string[] };
@@ -240,6 +242,7 @@ export function runEngine(text: string, requestedLossWeek?: string): EngineResul
       flagged: d > m.threshold,
       impact_inr: impact,
       pct_of_loss: impact != null && lossAmount > 0 ? r2(impact / lossAmount * 100) : null,
+      inr_per_pp: Math.round((m.mult / 100) * loss.gmv),
     };
   });
   for (const m of metrics) {
@@ -274,6 +277,13 @@ export function runEngine(text: string, requestedLossWeek?: string): EngineResul
     primary,
     downstream_sgmv: downstream,
     cogs_note: cogsNote,
+    history: (() => {
+      let streak = 0;
+      for (let i = lossIdx; i >= 0 && weeks[i].np < 0; i--) streak++;
+      let lastProfit: string | null = null;
+      for (let i = lossIdx - 1; i >= 0; i--) if (weeks[i].np > 0) { lastProfit = weeks[i].label; break; }
+      return { recent: weeks.slice(Math.max(0, lossIdx - 11), lossIdx + 1), last_profitable: lastProfit, loss_streak: streak };
+    })(),
     trace,
   };
 }

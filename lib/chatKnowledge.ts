@@ -30,7 +30,7 @@ LossLens is an AI agent that finds why an e-commerce or Shopify store's week los
 1. Go to [Launch the agent](#try). Answer 4 quick questions: store and category, loss week (optional), suspected problem, and what changed recently.
 2. Drop CSV exports or paste tables. Only the weekly PnL is required: week, marketing spend, GMV, RTO%, Spend/GMV%, COGS%, Cancel% and Net Profit%. Other files unlock more steps: changelog → step 3, fulfilment → 4, gender/age/platform and Meta trend → 5, product → 6, state → 7, campaign PnL → 8. The step unlock matrix shows coverage before the run.
 3. Click "Run the agent". It takes about 1–3 minutes.
-4. Results: an engine trace and guardrail panel, a dashboard (metrics, state RTO, campaign shift, layer verdicts, action plan), the full case study (copy or download as .md), and a JSON sidecar download.
+4. Results: an engine trace and guardrail panel, plus a "Generate full report" button that builds a shareable Diagnose → Strategy → Action plan report (KPI tiles, recovery sizing, up to 3 strategies, numbered operator actions, checklist) downloadable as HTML, a dashboard (metrics, state RTO, campaign shift, layer verdicts, action plan), the full case study (copy or download as .md), and a JSON sidecar download.
 No data? Load a [sample case](#cases).
 Excel files must be saved as CSV first. The input limit is about 60,000 characters.
 

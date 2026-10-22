@@ -8,6 +8,7 @@ export const PRICING = {
     troubleshoot: 20,
     themeStandard: 2, // after the daily free quota
     themePro: 5,
+    fullReport: 10,
   },
   packs: [
     { name: "Starter", tokens: 100, price: "₹99", blurb: "≈ 5 troubleshoots or 50 sections" },

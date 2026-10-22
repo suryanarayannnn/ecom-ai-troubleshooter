@@ -15,6 +15,7 @@ const ROWS = [
     { f: "Section Studio · Pro", c: `⬡ ${PRICING.cost.themePro}`, note: "Top model, best for complex sections" },
   ] : []),
   { f: "Troubleshoot run", c: `⬡ ${PRICING.cost.troubleshoot}`, note: "Full 8-step diagnosis with engine + verifier" },
+  { f: "Full troubleshoot report", c: `⬡ ${PRICING.cost.fullReport}`, note: "Diagnose → Strategy → Action plan, downloadable HTML" },
 ];
 
 function timeLeft(ts: number) {
