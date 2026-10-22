@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { FEATURES } from "@/lib/features";
-import { AI, generateJSON, LLMError } from "@/lib/llm";
+import { AI, generateJSON, KEYLESS, LLMError } from "@/lib/llm";
+import { sectionKeyless } from "@/lib/keyless";
 import { PRICING } from "@/lib/pricing";
 import { rateLimit } from "@/lib/rateLimit";
 import { publicWallet, readWallet, writeWallet } from "@/lib/wallet";
@@ -37,7 +38,7 @@ export async function POST(req: NextRequest) {
 
   const model = tier === "pro" ? AI.models.themePro : AI.models.themeStandard;
   try {
-    const section = await generateJSON({
+    const section = KEYLESS ? await sectionKeyless(prompt, style, model, previous) : await generateJSON({
       model,
       maxTokens: 24000,
       system: THEME_SYSTEM,

@@ -38,16 +38,23 @@ export function authHeaders(): Record<string, string> {
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-// POST with automatic waiting when a free tier says "slow down" (Pollinations: 1 reply / 30 s).
+// POST with automatic waiting when a free tier says "slow down".
+// Pollinations' anonymous tier answers 402 FREE_LIMIT + Retry-After (1 reply / 30 s per IP).
 export async function postWithRetry(url: string, body: unknown, tries = 3): Promise<Response> {
+  const payload = PROVIDER === "pollinations"
+    ? { ...(body as Record<string, unknown>), reasoning_effort: "low", max_tokens: undefined }
+    : body;
   for (let i = 0; ; i++) {
-    const res = await fetch(url, { method: "POST", headers: authHeaders(), body: JSON.stringify(body) });
-    if (res.status !== 429 || i >= tries - 1) return res;
+    const res = await fetch(url, { method: "POST", headers: authHeaders(), body: JSON.stringify(payload) });
+    if ((res.status !== 429 && res.status !== 402) || i >= tries - 1) return res;
     const msg = await res.text().catch(() => "");
-    const wait = Number(msg.match(/wait\s+(\d+)\s*second/i)?.[1] ?? res.headers.get("retry-after") ?? 30);
-    await sleep(Math.min(Math.max(wait, 2), 35) * 1000 + 500);
+    if (res.status === 402 && !/FREE_LIMIT|limit/i.test(msg)) return new Response(msg, { status: 402 });
+    const wait = Number(res.headers.get("retry-after") ?? msg.match(/(?:retry after|wait)\s+(\d+)\s*s/i)?.[1] ?? 30);
+    await sleep(Math.min(Math.max(wait, 2), 35) * 1000 + 750);
   }
 }
+
+export const KEYLESS = PROVIDER === "pollinations";
 
 export class LLMError extends Error {
   constructor(message: string, public status = 502) { super(message); }
@@ -69,7 +76,7 @@ async function complete(model: string, messages: Msg[], maxTokens: number, jsonM
   if (!res.ok) {
     const detail = await res.text().catch(() => "");
     console.error("llm", model, res.status, detail.slice(0, 500));
-    if (res.status === 429) throw new LLMError("The free AI model is busy (shared rate limit). Please try again in a minute.", 429);
+    if (res.status === 429 || res.status === 402) throw new LLMError("The free AI model is busy (shared rate limit). Please try again in a minute.", 429);
     if (res.status === 401 || res.status === 403) throw new LLMError("The AI provider rejected the server's key.", 500);
     if (res.status === 404) throw new LLMError(`The model "${model}" isn't available on this key.`, 502);
     throw new LLMError(`AI service error (${res.status}).`, 502);

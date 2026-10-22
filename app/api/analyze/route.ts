@@ -7,7 +7,8 @@ import { getSystemPrompt } from "@/lib/systemPrompt";
 import { rateLimit } from "@/lib/rateLimit";
 import { engineForPrompt, runEngine, type EngineResult } from "@/lib/engine";
 import { verify } from "@/lib/verify";
-import { AI, generateJSON, LLMError } from "@/lib/llm";
+import { AI, generateJSON, KEYLESS, LLMError } from "@/lib/llm";
+import { analyzeKeyless } from "@/lib/keyless";
 
 export const runtime = "nodejs";
 export const maxDuration = 300; // the reasoning step can take a minute or two
@@ -76,7 +77,7 @@ export async function POST(req: NextRequest) {
 
   // Layer 2: reasoning (free AI model)
   try {
-    const output = await generateJSON({
+    const output = KEYLESS ? await analyzeKeyless(getSystemPrompt(), data, engine) : await generateJSON({
       model: AI.models.analyze,
       maxTokens: 32000,
       system: getSystemPrompt(),
