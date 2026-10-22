@@ -63,7 +63,7 @@ RTO = return to origin (shipped but refused or undelivered). S/GMV = marketing s
 The app has no database. Data is sent once to the AI to produce the analysis. Don't paste data you aren't allowed to share.
 
 ## About the builder
-S Surya Narayan designed the troubleshooting method from 12+ real store loss cases and built the app (Next.js, TypeScript, Gemini AI, Vercel). LinkedIn: https://www.linkedin.com/in/ssuryanarayan`;
+S Surya Narayan designed the troubleshooting method from 12+ real store loss cases and built the app (Next.js, TypeScript, free AI models, Vercel). LinkedIn: https://www.linkedin.com/in/ssuryanarayan`;
 
 // Extra knowledge for features behind switches, so the assistant never mentions a disabled feature.
 export function chatSystem(): string {

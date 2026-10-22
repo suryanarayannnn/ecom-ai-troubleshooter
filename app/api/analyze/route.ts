@@ -74,7 +74,7 @@ export async function POST(req: NextRequest) {
     engine = { ok: false, reason: "The calculation engine hit an unexpected table format.", trace: [] };
   }
 
-  // Layer 2: reasoning (free Gemini model)
+  // Layer 2: reasoning (free AI model)
   try {
     const output = await generateJSON({
       model: AI.models.analyze,
