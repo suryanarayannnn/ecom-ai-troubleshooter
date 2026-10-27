@@ -4,6 +4,7 @@ import { runEngine, type EngineResult } from "@/lib/engine";
 import { FEATURES } from "@/lib/features";
 import { buildReportHtml, generateReportContent } from "@/lib/fullReport";
 import { LLMError } from "@/lib/llm";
+import { MAX_INPUT_CHARS } from "@/lib/limits";
 import { PRICING } from "@/lib/pricing";
 import { rateLimit } from "@/lib/rateLimit";
 import { publicWallet, readWallet, writeWallet } from "@/lib/wallet";
@@ -19,7 +20,7 @@ export async function POST(req: NextRequest) {
   }
 
   const body = await req.json().catch(() => null);
-  const data = typeof body?.data === "string" ? body.data.slice(0, 60_000) : "";
+  const data = typeof body?.data === "string" ? body.data.slice(0, MAX_INPUT_CHARS) : "";
   const parsed = AnalysisSchema.safeParse(body?.analysis);
   if (data.length < 50 || !parsed.success) {
     return NextResponse.json({ error: "Run a diagnosis first, then generate the full report." }, { status: 400 });

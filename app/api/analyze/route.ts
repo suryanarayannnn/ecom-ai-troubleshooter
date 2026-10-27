@@ -9,11 +9,13 @@ import { engineForPrompt, runEngine, type EngineResult } from "@/lib/engine";
 import { verify } from "@/lib/verify";
 import { AI, generateJSON, KEYLESS, LLMError } from "@/lib/llm";
 import { analyzeKeyless } from "@/lib/keyless";
+import { MAX_INPUT_CHARS } from "@/lib/limits";
+import { compactForAI } from "@/lib/compact";
 
 export const runtime = "nodejs";
 export const maxDuration = 300; // the reasoning step can take a minute or two
 
-const MAX_INPUT_CHARS = 60_000;
+
 
 // Charges the run when the token system is on; otherwise passes the response through.
 function settle(res: NextResponse, w: Wallet | null) {
@@ -51,7 +53,7 @@ export async function POST(req: NextRequest) {
   }
   if (data.length > MAX_INPUT_CHARS) {
     return NextResponse.json(
-      { error: `Input is ${data.length.toLocaleString()} characters; the limit is ${MAX_INPUT_CHARS.toLocaleString()}. Trim older weeks or less relevant breakdowns.` },
+      { error: `Input is ${data.length.toLocaleString()} characters; the limit is ${MAX_INPUT_CHARS.toLocaleString()}. Remove the oldest weeks or the least relevant files.` },
       { status: 413 },
     );
   }
@@ -75,9 +77,11 @@ export async function POST(req: NextRequest) {
     engine = { ok: false, reason: "The calculation engine hit an unexpected table format.", trace: [] };
   }
 
-  // Layer 2: reasoning (free AI model)
+  // Layer 2: reasoning (free AI model). Large uploads are trimmed for the AI;
+  // the engine above already used every row.
+  const aiData = compactForAI(data).text;
   try {
-    const output = KEYLESS ? await analyzeKeyless(getSystemPrompt(), data, engine) : await generateJSON({
+    const output = KEYLESS ? await analyzeKeyless(getSystemPrompt(), aiData, engine) : await generateJSON({
       model: AI.models.analyze,
       maxTokens: 32000,
       system: getSystemPrompt(),
@@ -90,7 +94,7 @@ export async function POST(req: NextRequest) {
         engineForPrompt(engine),
         "</engine_output>",
         "",
-        `<seller_data>\n${data}\n</seller_data>`,
+        `<seller_data>\n${aiData}\n</seller_data>`,
       ].join("\n"),
     });
 

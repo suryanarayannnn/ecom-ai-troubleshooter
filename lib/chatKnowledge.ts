@@ -32,7 +32,7 @@ LossLens is an AI agent that finds why an e-commerce or Shopify store's week los
 3. Click "Run the agent". It takes about 1–3 minutes.
 4. Results: an engine trace and guardrail panel, plus a "Generate full report" button that builds a shareable Diagnose → Strategy → Action plan report (KPI tiles, recovery sizing, up to 3 strategies, numbered operator actions, checklist) downloadable as HTML, a dashboard (metrics, state RTO, campaign shift, layer verdicts, action plan), the full case study (copy or download as .md), and a JSON sidecar download.
 No data? Load a [sample case](#cases).
-Excel files must be saved as CSV first. The input limit is about 60,000 characters.
+Excel files must be saved as CSV first. The input limit is 500,000 characters, enough for 1–2 months of daily exports; daily PnL rows are rolled up into weeks automatically.
 
 ## Architecture
 Intake → Engine (code, deterministic) → Reasoning (AI model, 8 steps) → Verifier (guardrails) → Report.

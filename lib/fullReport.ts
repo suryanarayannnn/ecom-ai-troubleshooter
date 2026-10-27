@@ -4,6 +4,7 @@ import { z } from "zod";
 import type { Analysis } from "./schema";
 import { engineForPrompt, type EngineResult } from "./engine";
 import { AI, KEYLESS, generateJSON } from "./llm";
+import { compactForAI } from "./compact";
 
 // ---------- AI content ----------
 
@@ -65,7 +66,7 @@ function context(data: string, engine: EngineResult, a: Analysis) {
     `Actions already proposed: ${d.actions.map((x) => x.action).join("; ")}`,
     `Data gaps: ${d.data_gaps.join("; ") || "none"}`,
     "</findings>",
-    `<seller_data>\n${data}\n</seller_data>`,
+    `<seller_data>\n${compactForAI(data, KEYLESS ? 20_000 : 150_000).text}\n</seller_data>`,
   ].join("\n");
 }
 

@@ -44,7 +44,7 @@ Two add-on features can be turned off or back on without changing any code. Set 
 | Variable | `off` means | Default |
 |---|---|---|
 | `NEXT_PUBLIC_FEATURE_STUDIO` | Section Studio page, API, nav link and home promo are removed (`/studio` returns 404) | on |
-| `NEXT_PUBLIC_FEATURE_TOKENS` | No wallet, no pricing page, nothing is charged; Studio shows only the free Standard tier | on |
+| `NEXT_PUBLIC_FEATURE_TOKENS` | Set to `on` to bring back the demo token wallet, pricing page and per-use costs | off |
 
 To turn a feature back on, delete the variable (or set it to `on`) and redeploy. Balances and saved sections live in visitors' browsers, so they come back too.
 

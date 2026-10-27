@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import ChatWidget from "@/components/ChatWidget";
 import Nav from "@/components/Nav";
+import { MAX_INPUT_CHARS } from "@/lib/limits";
 import { FEATURES } from "@/lib/features";
 import { PRICING, type PublicWallet } from "@/lib/pricing";
 import { emitWallet } from "@/lib/useWallet";
@@ -26,7 +27,7 @@ type Result = { analysis: Analysis; engine: EngineResult; checks: Check[] };
 type Upload = { name: string; size: number; kind: string; text: string };
 
 const EMPTY: Answers = { seller: "", category: "", lossWeek: "", suspect: "Not sure", changes: [], notes: "" };
-const MAX_CHARS = 60_000;
+const MAX_CHARS = MAX_INPUT_CHARS;
 
 const TICKER = [
   "Campaign × Gender", "Campaign × Product saturation", "Campaign × Geo", "Catalogue contraction",
@@ -341,7 +342,7 @@ export default function Home() {
                   >
                     <span className="text-2xl" style={{ color: "var(--cyan)" }}>⇪</span>
                     <p className="mt-1 text-sm">Drop CSV exports here <span className="muted">or click to browse</span></p>
-                    <p className="mono mt-1 text-[11px] muted">PnL · campaigns · changelog · audience · state · product · fulfilment</p>
+                    <p className="mono mt-1 text-[11px] muted">PnL · campaigns · changelog · audience · state · product · fulfilment · up to 1–2 months (daily rows OK)</p>
                     <input ref={fileInput} type="file" multiple accept=".csv,.tsv,.txt,.md,.json" className="hidden" onChange={(e) => { addFiles(e.target.files); e.target.value = ""; }} />
                   </div>
 

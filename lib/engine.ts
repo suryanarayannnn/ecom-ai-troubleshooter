@@ -73,7 +73,50 @@ function num(s: string | undefined): number | null {
   return Number.isFinite(n) ? n : null;
 }
 
-export function parsePnl(text: string): Week[] | null {
+// Dates as exported in India: ISO (2026-09-01), day-first (01/09/2026), or with a month name (1 Sep 2026).
+// Week labels such as "W31 2026" are deliberately not dates.
+function parseDate(s: string | undefined): number | null {
+  if (!s) return null;
+  const t = s.trim();
+  let m = t.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+  if (m) return Date.UTC(+m[1], +m[2] - 1, +m[3]);
+  m = t.match(/^(\d{1,2})[/.-](\d{1,2})[/.-](\d{2,4})\b/);
+  if (m) return Date.UTC(m[3].length === 2 ? 2000 + +m[3] : +m[3], +m[2] - 1, +m[1]);
+  if (/\b(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\b/i.test(t) && /\d{4}/.test(t)) {
+    const v = Date.parse(t);
+    return Number.isNaN(v) ? null : v;
+  }
+  return null;
+}
+
+function isoWeek(ms: number): { year: number; week: number; monday: string } {
+  const d = new Date(ms);
+  const day = (d.getUTCDay() + 6) % 7; // Mon = 0
+  const thursday = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate() - day + 3));
+  const yearStart = Date.UTC(thursday.getUTCFullYear(), 0, 1);
+  const week = Math.ceil(((thursday.getTime() - yearStart) / 864e5 + 1) / 7);
+  const monday = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate() - day)).toISOString().slice(0, 10);
+  return { year: thursday.getUTCFullYear(), week, monday };
+}
+
+// Sums spend and GMV per ISO week; percentage metrics are GMV-weighted averages.
+function rollUpWeeks(days: Week[], dateOf: (w: Week) => number): Week[] {
+  const map = new Map<string, { label: string; date: string; rows: Week[] }>();
+  for (const d of days) {
+    const iso = isoWeek(dateOf(d));
+    const key = `${iso.year}-${iso.week}`;
+    if (!map.has(key)) map.set(key, { label: `W${iso.week} ${iso.year}`, date: iso.monday, rows: [] });
+    map.get(key)!.rows.push(d);
+  }
+  return [...map.values()].map(({ label, date, rows }) => {
+    const spend = rows.reduce((s, r) => s + r.spend, 0);
+    const gmv = rows.reduce((s, r) => s + r.gmv, 0) || 1;
+    const wavg = (k: "rto" | "cogs" | "cancel" | "np") => Math.round((rows.reduce((s, r) => s + r[k] * r.gmv, 0) / gmv) * 100) / 100;
+    return { label, date, spend, gmv, sgmv: Math.round((spend / gmv) * 10000) / 100, rto: wavg("rto"), cogs: wavg("cogs"), cancel: wavg("cancel"), np: wavg("np") };
+  });
+}
+
+export function parsePnl(text: string): { weeks: Week[]; dailyRows: number } | null {
   const lines = text.split(/\r?\n/);
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
@@ -111,9 +154,17 @@ export function parsePnl(text: string): Week[] | null {
     }
     if (weeks.length < 2) continue;
 
-    const dated = weeks.every((w) => w.date && !Number.isNaN(Date.parse(w.date)));
-    if (dated) weeks.sort((a, b) => Date.parse(a.date!) - Date.parse(b.date!));
-    return weeks;
+    const dateOf = (w: Week) => parseDate(w.date) ?? parseDate(w.label) ?? NaN;
+    const dated = weeks.every((w) => !Number.isNaN(dateOf(w)));
+    if (dated) weeks.sort((a, b) => dateOf(a) - dateOf(b));
+
+    // Daily (or near-daily) rows → roll up into ISO weeks so 1–2 months of daily exports work.
+    if (dated && weeks.length >= 10) {
+      const gaps = weeks.slice(1).map((w, k) => (dateOf(w) - dateOf(weeks.at(k)!)) / 864e5).sort((a, b) => a - b);
+      const median = gaps.at(Math.floor(gaps.length / 2)) ?? 7;
+      if (median <= 2) return { weeks: rollUpWeeks(weeks, dateOf), dailyRows: weeks.length };
+    }
+    return { weeks, dailyRows: 0 };
   }
   return null;
 }
@@ -133,10 +184,12 @@ const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, "");
 
 export function runEngine(text: string, requestedLossWeek?: string): EngineResult {
   const trace: string[] = [];
-  const weeks = parsePnl(text);
-  if (!weeks) {
+  const parsed = parsePnl(text);
+  if (!parsed) {
     return { ok: false, reason: "No weekly PnL table with Spend, GMV, RTO%, Spend/GMV%, COGS%, Cancel% and Net Profit% columns was found.", trace };
   }
+  const weeks = parsed.weeks;
+  if (parsed.dailyRows) trace.push(`intake: rolled ${parsed.dailyRows} daily PnL rows up into ${weeks.length} ISO weeks`);
   trace.push(`intake: parsed ${weeks.length} PnL weeks (${weeks[0].label} → ${weeks[weeks.length - 1].label})`);
 
   // Loss week

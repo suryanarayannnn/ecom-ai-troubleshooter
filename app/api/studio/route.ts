@@ -15,12 +15,11 @@ export async function POST(req: NextRequest) {
   if (!AI.ready) return NextResponse.json({ error: AI.missingKeyMessage }, { status: 503 });
 
   const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "anon";
-  const limit = rateLimit(`studio:${ip}`, FEATURES.tokens ? 15 : 8, 10 * 60 * 1000);
+  const limit = rateLimit(`studio:${ip}`, 12, 10 * 60 * 1000);
   if (!limit.ok) return NextResponse.json({ error: "Too many generations. Take a short break and try again." }, { status: 429 });
 
   const body = await req.json().catch(() => null);
-  // Without the token system there is no way to unlock Pro, so everyone gets Standard.
-  const tier: "standard" | "pro" = body?.tier === "pro" && FEATURES.tokens ? "pro" : "standard";
+  const tier: "standard" | "pro" = body?.tier === "pro" ? "pro" : "standard";
   const prompt = typeof body?.prompt === "string" ? body.prompt.trim().slice(0, 1500) : "";
   const style = body?.style as BrandStyle | undefined;
   const previous = body?.previous && typeof body.previous.liquid === "string" && typeof body.previous.preview_html === "string"

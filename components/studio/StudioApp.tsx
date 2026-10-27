@@ -194,13 +194,13 @@ export default function StudioApp() {
               onChange={(e) => setPrompt(e.target.value)}
             />
 
-            {FEATURES.tokens && (
+            {(
               <div className="mt-3 grid grid-cols-2 gap-2">
                 {(["standard", "pro"] as const).map((t) => (
                   <button key={t} type="button" data-on={tier === t} onClick={() => setTier(t)} className="chip rounded-xl px-3 py-2 text-left" style={{ borderRadius: 12 }}>
                     <span className="block text-sm font-semibold capitalize">{t}</span>
                     <span className="block text-[11px] muted">
-                      {t === "standard" ? `${PRICING.freeThemePerDay}/day free, then ⬡${PRICING.cost.themeStandard}` : `⬡${PRICING.cost.themePro} · higher quality`}
+                      {FEATURES.tokens ? (t === "standard" ? `${PRICING.freeThemePerDay}/day free, then ⬡${PRICING.cost.themeStandard}` : `⬡${PRICING.cost.themePro} · higher quality`) : (t === "standard" ? "Faster" : "Higher quality, slower")}
                     </span>
                   </button>
                 ))}
@@ -208,7 +208,7 @@ export default function StudioApp() {
             )}
 
             <button type="button" onClick={() => run(prompt, false)} disabled={busy || prompt.trim().length < 5} className="btn-primary mt-4 w-full rounded-xl px-4 py-3 text-sm disabled:opacity-40">
-              {busy ? "Generating…" : `Generate section · ${costLabel}`}
+              {busy ? "Generating…" : FEATURES.tokens ? `Generate section · ${costLabel}` : "Generate section"}
             </button>
             {error && (
               <p className="mt-3 rounded-lg border p-2.5 text-xs" style={{ borderColor: "color-mix(in srgb, var(--loss) 45%, transparent)", color: "var(--loss-ink)", background: "color-mix(in srgb, var(--loss) 8%, transparent)" }}>
@@ -346,7 +346,7 @@ export default function StudioApp() {
                 <input className="field flex-1 px-3.5 py-2.5 text-sm" maxLength={1500} value={refine} onChange={(e) => setRefine(e.target.value)}
                   placeholder="Refine: “make the heading bigger”, “add a third button”, “dark background”…" />
                 <button type="submit" disabled={busy || refine.trim().length < 3} className="btn-primary rounded-xl px-4 text-sm disabled:opacity-40">
-                  Refine · {costLabel.split(" · ")[0]}
+                  {FEATURES.tokens ? `Refine · ${costLabel.split(" · ")[0]}` : "Refine"}
                 </button>
               </form>
             </div>
