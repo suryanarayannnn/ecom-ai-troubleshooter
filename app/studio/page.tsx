@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { redirect } from "next/navigation";
 import { FEATURES } from "@/lib/features";
 import StudioApp from "@/components/studio/StudioApp";
 
@@ -9,6 +9,6 @@ export const metadata: Metadata = {
 };
 
 export default function StudioPage() {
-  if (!FEATURES.studio) notFound();
+  if (!FEATURES.studio) redirect("/");
   return <StudioApp />;
 }

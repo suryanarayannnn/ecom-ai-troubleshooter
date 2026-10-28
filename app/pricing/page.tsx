@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { redirect } from "next/navigation";
 import { FEATURES } from "@/lib/features";
 import PricingApp from "@/components/PricingApp";
 
@@ -9,6 +9,6 @@ export const metadata: Metadata = {
 };
 
 export default function PricingPage() {
-  if (!FEATURES.tokens) notFound();
+  if (!FEATURES.tokens) redirect("/");
   return <PricingApp />;
 }
